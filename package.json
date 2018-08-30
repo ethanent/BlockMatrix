@@ -1,0 +1,24 @@
+{
+  "name": "munch-v2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "electron-builder . --macos --linux --windows --ia32"
+  },
+  "author": "Ethan Davis (https://ethanent.me)",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "electron": "^2.0.8",
+    "electron-builder": "^20.28.3"
+  },
+  "build": {
+    "appId": "me.ethanent.munch-v2",
+	"productName": "Munch v2",
+	"copyright": "Copyright © 2018 Ethan Davis",
+	"DmgOptions": {
+		"title": "Munch v2"
+	}
+  }
+}
