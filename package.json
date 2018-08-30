@@ -17,7 +17,7 @@
     "appId": "me.ethanent.munch-v2",
 	"productName": "Munch v2",
 	"copyright": "Copyright © 2018 Ethan Davis",
-	"DmgOptions": {
+	"dmg": {
 		"title": "Munch v2"
 	}
   }
