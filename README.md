@@ -3,7 +3,7 @@
 
 ## Build
 
-First, clone the repository of course.
+First, clone the repository of course. Then enter the clone directory.
 
 Then:
 
