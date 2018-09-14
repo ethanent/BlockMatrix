@@ -16,6 +16,10 @@ body {
 	margin: 0;
 }
 
+a {
+	text-decoration: none;
+}
+
 #game {
 	display: none;
 }
@@ -28,6 +32,12 @@ body {
 	display: none;
 
 	margin-top: 20vh;
+
+	text-align: center;
+}
+
+#copyright {
+	margin-top: 40vh;
 
 	text-align: center;
 }

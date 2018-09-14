@@ -1,3 +1,5 @@
+const {shell} = require('electron')
+
 const os = require('os')
 const fs = require('fs')
 const path = require('path')
@@ -14,6 +16,7 @@ document.querySelector('h1').textContent = 'Welcome, ' + name[0] + '.'
 
 setTimeout(() => {
 	document.querySelector('#status').style.display = 'none'
+	document.querySelector('#copyright').style.display = 'none'
 
 	document.querySelector('#game').style.display = 'block'
 
@@ -26,6 +29,8 @@ const gameEnded = () => {
 	let {score} = gameState
 
 	console.log('Game over! Score: ' + score)
+
+	document.querySelector('#copyright').style.display = 'block'
 
 	document.querySelector('#status > h1').textContent = 'Hold on.'
 
@@ -49,7 +54,13 @@ const gameEnded = () => {
 
 			document.querySelector('#game').style.display = 'block'
 
+			document.querySelector('#copyright').style.display = 'none'
+
 			startGame()
-		}, 2000)
+		}, 3000)
 	}, 1000)
+}
+
+const openSite = () => {
+	shell.openExternal('https://ethanent.me')
 }
