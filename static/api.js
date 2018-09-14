@@ -15,7 +15,7 @@ const api = {
 			})
 		})
 
-		if (res.statusCode !== 200) {
+		if (res.status !== 200) {
 			throw new Error('Non-200 status code from API server.')
 		}
 
@@ -34,7 +34,7 @@ const api = {
 			})
 		})
 
-		if (res.statusCode !== 200) {
+		if (res.status !== 200) {
 			throw new Error('Non-200 status code from API server.')
 		}
 	}

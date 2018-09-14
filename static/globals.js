@@ -15,6 +15,6 @@ const username = os.userInfo().username.toLowerCase()
 const name = username.split(/ |\./).map((name) => name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
 
 const syncData = {
-	'highScore': 0,
+	'highscore': 0,
 	'returningPlayer': false
 }

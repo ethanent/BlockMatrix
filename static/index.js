@@ -64,19 +64,19 @@ const gameEnded = async () => {
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#score').style.display = 'block'
 
-	if (score > syncData.highScore) {
-		syncData.highScore = score
+	if (score > syncData.highscore) {
+		syncData.highscore = score
 
 		playSoundEffect('highscore.wav')
 
 		document.querySelector('#score > h1').textContent = 'New highscore!'
 
-		document.querySelector('#score > h2').textContent = 'You scored ' + syncData.highScore + '.'
+		document.querySelector('#score > h2').textContent = 'You scored ' + syncData.highscore + '.'
 	}
 	else {
 		document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
 
-		document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
+		document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highscore + '.'
 	}
 
 	await poky(2000)

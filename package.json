@@ -22,6 +22,6 @@
 		}
 	},
 	"game": {
-		"apiBase": "http://localhost"
+		"apiBase": "http://localhost:8080"
 	}
 }
