@@ -23,3 +23,11 @@ body {
 #status {
 	text-align: center;
 }
+
+#score {
+	display: none;
+
+	margin-top: 20vh;
+
+	text-align: center;
+}

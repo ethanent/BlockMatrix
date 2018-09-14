@@ -2,6 +2,10 @@ const os = require('os')
 
 let name = os.userInfo().username.split(/ |\./).map((name) => name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
 
+let syncData = {
+	'highScore': 4
+}
+
 document.querySelector('h1').textContent = 'Welcome, ' + name[0] + '.'
 
 setTimeout(() => {
@@ -19,17 +23,27 @@ const gameEnded = () => {
 
 	console.log('Game over! Score: ' + score)
 
-	document.querySelector('h1').textContent = 'You scored ' + score + '.'
+	document.querySelector('#status > h1').textContent = 'Hold on.'
 
 	document.querySelector('#status').style.display = 'block'
 
 	document.querySelector('#game').style.display = 'none'
 
 	setTimeout(() => {
-		startGame()
-
 		document.querySelector('#status').style.display = 'none'
 
-		document.querySelector('#game').style.display = 'block'
+		document.querySelector('#score').style.display = 'block'
+
+		document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
+
+		document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
+
+		setTimeout(() => {
+			document.querySelector('#score').style.display = 'none'
+
+			document.querySelector('#game').style.display = 'block'
+
+			startGame()
+		}, 2000)
 	}, 1000)
 }
