@@ -1,5 +1,5 @@
-# munch-v2
-> I decided to make a Scratch game into an executable- why not?
+# BlockMatrix
+> Game, has a block.
 
 ## Build
 

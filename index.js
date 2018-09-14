@@ -5,7 +5,7 @@ app.on('ready', () => {
 	const window = new BrowserWindow({
 		'useContentSize': true,
 		'resizable': false,
-		'title': 'Munch v2'
+		'title': 'BlockMatrix'
 	})
 
 	window.setMenu(null)
