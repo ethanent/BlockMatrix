@@ -14,21 +14,26 @@ const renderer = new canvax.Renderer(document.querySelector('#game'))
 
 //renderer.ctx.transform(1, 0, 0, -1, 0, renderer.element.height)
 
-let gameState = {
-	'location': {
-		'x': 100,
-		'y': 100
-	},
-	'size': 60,
-	'accel': {
-		'x': 0,
-		'y': 0
-	},
-	'vel': 0,
-	'entities': [],
-	'score': 0,
-	'activePowerup': null
+const defaultGameState = () => {
+	return {
+		'location': {
+			'x': 100,
+			'y': 100
+		},
+		'size': 60,
+		'accel': {
+			'x': 0,
+			'y': 0
+		},
+		'vel': 0,
+		'entities': [],
+		'score': 0,
+		'activePowerup': null,
+		'odometer': 0
+	}
 }
+
+let gameState = defaultGameState()
 
 const randomCoordsInRange = () => [Math.floor(Math.random() * (renderer.element.width - 200)) + 100, Math.floor(Math.random() * (renderer.element.height - 200)) + 100]
 
@@ -36,12 +41,10 @@ const randomSafeLocation = () => {
 	let coords = randomCoordsInRange()
 
 	while (pointDist(coords, [gameState.location.x, gameState.location.y]) < 300) {
-		console.log('Repick point ' + coords)
-
 		coords = randomCoordsInRange()
 	}
 
-	console.log('Random coords: ' + coords)
+	console.log('Random safe coords: ' + coords)
 
 	return {
 		'x': coords[0],
@@ -57,7 +60,7 @@ const addGoal = () => gameState.entities.push({
 const addPowerUp = () => gameState.entities.push({
 	'type': 'powerup',
 	'location': randomSafeLocation(),
-	'kind': ['slow'][Math.floor(Math.random() * 1)]
+	'kind': ['slow', 'eliminator'][Math.floor(Math.random() * 2)]
 })
 
 const addEnemy = () => {
@@ -74,8 +77,12 @@ const addEnemy = () => {
 	})
 }
 
-addGoal()
-addEnemy()
+const startGame = () => {
+	gameState = defaultGameState()
+
+	addGoal()
+	addEnemy()
+}
 
 const gameLoop = () => {
 	if (heldKeys.includes('ArrowUp')) gameState.accel.y -= 1
@@ -97,21 +104,20 @@ const gameLoop = () => {
 
 	gameState.vel = Math.abs(gameState.accel.x) + Math.abs(gameState.accel.y)
 
+	gameState.odometer += gameState.vel
+
 	// Check for goal touching
 
 	let goal = gameState.entities.find((ent) => ent.type === 'goal')
 
 	if (goal && pointDist([gameState.location.x, gameState.location.y], [goal.location.x - 20, goal.location.y - 20]) < 65) {
-		console.log('Scored a point')
-
 		gameState.entities.splice(gameState.entities.findIndex((ent) => ent.type === 'goal'), 1)
 
 		gameState.score++
 
-		if (gameState.activePowerup && gameState.activePowerup.expires >= gameState.score) gameState.activePowerup = null
+		if (gameState.activePowerup && gameState.score >= gameState.activePowerup.expires) gameState.activePowerup = null
 
 		if (gameState.score % 5 === 0 && gameState.entities.findIndex((entity) => entity.type === 'powerup') === -1 && !gameState.activePowerup) {
-			console.log('Adding powerup')
 			addPowerUp()
 		}
 
@@ -150,20 +156,9 @@ const gameLoop = () => {
 		}
 
 		if (pointDist([gameState.location.x, gameState.location.y], [dot.location.x - 30, dot.location.y - 30]) < 50) {
-			gameState.entities = []
-			gameState.location = {
-				'x': 100,
-				'y': 100
-			}
-			gameState.accel = {
-				'x': 0,
-				'y': 0
-			}
-			gameState.score = 0
-			gameState.activePowerup = null
+			gameEnded()
 
-			addGoal()
-			addEnemy()
+			gameState = defaultGameState()
 		}
 	})
 
@@ -175,9 +170,17 @@ const gameLoop = () => {
 
 			if (powerup.kind === 'slow') {
 				gameState.activePowerup = {
-					'type': 'slow',
-					'expires': gameState.score + 1
+					'kind': 'slow',
+					'expires': gameState.score + 3
 				}
+			}
+
+			if (powerup.kind === 'eliminator') {
+				gameState.entities.forEach((entity, i) => {
+					if (entity.type === 'dot') {
+						if (Math.floor(Math.random() * 3) === 1) gameState.entities.splice(i, 1)
+					}
+				})
 			}
 
 			gameState.entities.splice(gameState.entities.findIndex((entity) => entity.type === 'powerup'), 1)
