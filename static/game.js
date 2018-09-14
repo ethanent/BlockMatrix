@@ -73,7 +73,7 @@ const addEnemy = () => {
 			'x': direction === 'up' || direction === 'down' ? Math.floor(Math.random() * renderer.element.width) : (direction === 'right' ? 20 : renderer.element.width - 20),
 			'y': direction === 'left' || direction === 'right' ? Math.floor(Math.random() * renderer.element.height) : (direction === 'up' ? 20 : renderer.element.height - 20)
 		},
-		'multiplier': (Math.floor(Math.random() * 40) + 50) * 0.01
+		'multiplier': (Math.floor(Math.random() * 60) + 50) * 0.01
 	})
 }
 

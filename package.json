@@ -20,5 +20,8 @@
 		"dmg": {
 			"title": "BlockMatrix"
 		}
+	},
+	"game": {
+		"api": "https://"
 	}
 }

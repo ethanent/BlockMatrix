@@ -1,9 +1,13 @@
 const os = require('os')
+const fs = require('fs')
+const path = require('path')
+
+const version = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'))).version
 
 let name = os.userInfo().username.split(/ |\./).map((name) => name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
 
 let syncData = {
-	'highScore': 4
+	'highScore': 0
 }
 
 document.querySelector('h1').textContent = 'Welcome, ' + name[0] + '.'
@@ -33,6 +37,8 @@ const gameEnded = () => {
 		document.querySelector('#status').style.display = 'none'
 
 		document.querySelector('#score').style.display = 'block'
+
+		if (score > syncData.highScore) syncData.highScore = score
 
 		document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
 
