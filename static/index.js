@@ -1,77 +1,84 @@
-const {shell} = require('electron')
+document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
 
-const os = require('os')
-const fs = require('fs')
-const path = require('path')
-
-const version = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'))).version
-
-let name = os.userInfo().username.split(/ |\./).map((name) => name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase())
-
-let syncData = {
-	'highScore': 0
-}
-
-document.querySelector('h1').textContent = 'Welcome, ' + name[0] + '.'
-
-setTimeout(() => {
+;(async() => {
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#copyright').style.display = 'none'
 
 	document.querySelector('#game').style.display = 'block'
 
+	let loginRes
+
+	try {
+		loginRes = await api.login()
+	}
+	catch (err) {
+		document.querySelector('#status > h1').textContent = 'Error'
+		document.querySelector('#status > h2').textContent = 'Failed to login to BlockMatrix server.'
+
+		await poky(800)
+	}
+
+	await poky(400)
+
 	startGame()
-}, 1000)
+})()
 
 //startGame()
 
-const gameEnded = () => {
+const gameEnded = async () => {
 	playSoundEffect('death.wav')
 
 	let {score} = gameState
 
-	setTimeout(() => {
-		console.log('Game over! Score: ' + score)
+	await poky(700)
 
-		document.querySelector('#copyright').style.display = 'block'
+	console.log('Game over! Score: ' + score)
 
-		document.querySelector('#status > h1').textContent = 'Hold on.'
+	document.querySelector('#status > h1').textContent = 'Hold on.'
 
-		document.querySelector('#status').style.display = 'block'
+	document.querySelector('#game').style.display = 'none'
+	document.querySelector('#status').style.display = 'block'
+	document.querySelector('#copyright').style.display = 'block'
 
-		document.querySelector('#game').style.display = 'none'
+	try {
+		await api.submitScore(score)
+	}
+	catch (err) {
+		document.querySelector('#status > h1').textContent = 'Error'
+		document.querySelector('#status > h2').textContent = 'Failed to submit score.'
 
-		setTimeout(() => {
-			document.querySelector('#status').style.display = 'none'
+		await poky(800)
+	}
 
-			document.querySelector('#score').style.display = 'block'
+	await poky(400)
 
-			if (score > syncData.highScore) {
-				syncData.highScore = score
+	document.querySelector('#status').style.display = 'none'
+	document.querySelector('#score').style.display = 'block'
 
-				playSoundEffect('highscore.wav')
+	if (score > syncData.highScore) {
+		syncData.highScore = score
 
-				document.querySelector('#score > h1').textContent = 'New highscore!'
+		playSoundEffect('highscore.wav')
 
-				document.querySelector('#score > h2').textContent = 'You scored ' + syncData.highScore + '.'
-			}
-			else {
-				document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
+		document.querySelector('#score > h1').textContent = 'New highscore!'
 
-				document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
-			}
+		document.querySelector('#score > h2').textContent = 'You scored ' + syncData.highScore + '.'
+	}
+	else {
+		document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
 
-			setTimeout(() => {
-				document.querySelector('#score').style.display = 'none'
+		document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
+	}
 
-				document.querySelector('#game').style.display = 'block'
+	await poky(2000)
 
-				document.querySelector('#copyright').style.display = 'none'
+	document.querySelector('#score').style.display = 'none'
 
-				startGame()
-			}, 3000)
-		}, 700)
-	}, 600)
+	document.querySelector('#game').style.display = 'block'
+
+	document.querySelector('#copyright').style.display = 'none'
+
+	startGame()
 }
 
 const openSite = () => {
