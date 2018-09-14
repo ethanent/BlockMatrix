@@ -38,6 +38,8 @@ const gameEnded = () => {
 
 	document.querySelector('#game').style.display = 'none'
 
+	playSoundEffect('death.mp3')
+
 	setTimeout(() => {
 		document.querySelector('#status').style.display = 'none'
 
@@ -58,7 +60,7 @@ const gameEnded = () => {
 
 			startGame()
 		}, 3000)
-	}, 1000)
+	}, 1500)
 }
 
 const openSite = () => {

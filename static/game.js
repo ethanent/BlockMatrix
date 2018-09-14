@@ -171,7 +171,7 @@ const gameLoop = () => {
 			if (powerup.kind === 'slow') {
 				gameState.activePowerup = {
 					'kind': 'slow',
-					'expires': gameState.score + 3
+					'expires': gameState.score + 2
 				}
 			}
 
