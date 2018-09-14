@@ -29,7 +29,9 @@ const defaultGameState = () => {
 		'entities': [],
 		'score': 0,
 		'activePowerup': null,
-		'odometer': 0
+		'odometer': 0,
+		'allowMovement': false,
+		'ended': false
 	}
 }
 
@@ -80,15 +82,19 @@ const addEnemy = () => {
 const startGame = () => {
 	gameState = defaultGameState()
 
+	gameState.allowMovement = true
+
 	addGoal()
 	addEnemy()
 }
 
 const gameLoop = () => {
-	if (heldKeys.includes('ArrowUp')) gameState.accel.y -= 1
-	if (heldKeys.includes('ArrowDown')) gameState.accel.y += 1
-	if (heldKeys.includes('ArrowLeft')) gameState.accel.x -= 1
-	if (heldKeys.includes('ArrowRight')) gameState.accel.x += 1
+	if (gameState.allowMovement) {
+		if (heldKeys.includes('ArrowUp')) gameState.accel.y -= 1
+		if (heldKeys.includes('ArrowDown')) gameState.accel.y += 1
+		if (heldKeys.includes('ArrowLeft')) gameState.accel.x -= 1
+		if (heldKeys.includes('ArrowRight')) gameState.accel.x += 1
+	}
 
 	if (gameState.location.y <= 30 && gameState.accel.y < 0) gameState.accel.y = 0
 	if (gameState.location.y >= renderer.element.height - 60 && gameState.accel.y > 0) gameState.accel.y = 0
@@ -156,9 +162,13 @@ const gameLoop = () => {
 		}
 
 		if (pointDist([gameState.location.x, gameState.location.y], [dot.location.x - 30, dot.location.y - 30]) < 50) {
-			gameEnded()
+			if (gameState.ended) return
 
-			gameState = defaultGameState()
+			gameState.ended = true
+		
+			gameState.allowMovement = false
+
+			gameEnded()
 		}
 	})
 

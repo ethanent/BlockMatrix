@@ -26,41 +26,43 @@ setTimeout(() => {
 //startGame()
 
 const gameEnded = () => {
-	let {score} = gameState
-
-	console.log('Game over! Score: ' + score)
-
-	document.querySelector('#copyright').style.display = 'block'
-
-	document.querySelector('#status > h1').textContent = 'Hold on.'
-
-	document.querySelector('#status').style.display = 'block'
-
-	document.querySelector('#game').style.display = 'none'
-
 	playSoundEffect('death.mp3')
 
+	let {score} = gameState
+
 	setTimeout(() => {
-		document.querySelector('#status').style.display = 'none'
+		console.log('Game over! Score: ' + score)
 
-		document.querySelector('#score').style.display = 'block'
+		document.querySelector('#copyright').style.display = 'block'
 
-		if (score > syncData.highScore) syncData.highScore = score
+		document.querySelector('#status > h1').textContent = 'Hold on.'
 
-		document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
+		document.querySelector('#status').style.display = 'block'
 
-		document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
+		document.querySelector('#game').style.display = 'none'
 
 		setTimeout(() => {
-			document.querySelector('#score').style.display = 'none'
+			document.querySelector('#status').style.display = 'none'
 
-			document.querySelector('#game').style.display = 'block'
+			document.querySelector('#score').style.display = 'block'
 
-			document.querySelector('#copyright').style.display = 'none'
+			if (score > syncData.highScore) syncData.highScore = score
 
-			startGame()
-		}, 3000)
-	}, 1500)
+			document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
+
+			document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
+
+			setTimeout(() => {
+				document.querySelector('#score').style.display = 'none'
+
+				document.querySelector('#game').style.display = 'block'
+
+				document.querySelector('#copyright').style.display = 'none'
+
+				startGame()
+			}, 3000)
+		}, 700)
+	}, 600)
 }
 
 const openSite = () => {
