@@ -121,11 +121,15 @@ const gameLoop = () => {
 
 		gameState.score++
 
+		if (gameState.score > 10) document.body.style.backgroundColor = '#000000'
+
 		if (gameState.activePowerup && gameState.score >= gameState.activePowerup.expires) gameState.activePowerup = null
 
 		if (gameState.score % 5 === 0 && gameState.entities.findIndex((entity) => entity.type === 'powerup') === -1 && !gameState.activePowerup) {
 			addPowerUp()
 		}
+
+		playSoundEffect('click.wav')
 
 		addGoal()
 		addEnemy()
@@ -165,8 +169,10 @@ const gameLoop = () => {
 			if (gameState.ended) return
 
 			gameState.ended = true
-		
+
 			gameState.allowMovement = false
+
+			document.body.style.backgroundColor = '#F2F2F0'
 
 			gameEnded()
 		}
@@ -192,6 +198,8 @@ const gameLoop = () => {
 					}
 				})
 			}
+
+			playSoundEffect('powerup.wav')
 
 			gameState.entities.splice(gameState.entities.findIndex((entity) => entity.type === 'powerup'), 1)
 		}
@@ -222,7 +230,7 @@ const render = () => {
 
 	// Render score
 
-	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Arial', '#000000', 'end', 500))
+	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Arial', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'end', 500))
 
 	renderer.render()
 

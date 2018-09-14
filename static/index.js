@@ -26,7 +26,7 @@ setTimeout(() => {
 //startGame()
 
 const gameEnded = () => {
-	playSoundEffect('death.mp3')
+	playSoundEffect('death.wav')
 
 	let {score} = gameState
 
@@ -46,11 +46,20 @@ const gameEnded = () => {
 
 			document.querySelector('#score').style.display = 'block'
 
-			if (score > syncData.highScore) syncData.highScore = score
+			if (score > syncData.highScore) {
+				syncData.highScore = score
 
-			document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
+				playSoundEffect('highscore.wav')
 
-			document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
+				document.querySelector('#score > h1').textContent = 'New highscore!'
+
+				document.querySelector('#score > h2').textContent = 'You scored ' + syncData.highScore + '.'
+			}
+			else {
+				document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
+
+				document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highScore + '.'
+			}
 
 			setTimeout(() => {
 				document.querySelector('#score').style.display = 'none'
