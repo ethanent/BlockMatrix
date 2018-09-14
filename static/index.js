@@ -1,10 +1,7 @@
 document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
 
 ;(async() => {
-	document.querySelector('#status').style.display = 'none'
-	document.querySelector('#copyright').style.display = 'none'
-
-	document.querySelector('#game').style.display = 'block'
+	console.log('Logging in!')
 
 	let loginRes
 
@@ -12,6 +9,8 @@ document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
 		loginRes = await api.login()
 	}
 	catch (err) {
+		console.error(err)
+
 		document.querySelector('#status > h1').textContent = 'Error'
 		document.querySelector('#status > h2').textContent = 'Failed to login to BlockMatrix server.'
 
@@ -19,6 +18,11 @@ document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
 	}
 
 	await poky(400)
+
+	document.querySelector('#status').style.display = 'none'
+	document.querySelector('#copyright').style.display = 'none'
+
+	document.querySelector('#game').style.display = 'block'
 
 	startGame()
 })()
@@ -44,6 +48,8 @@ const gameEnded = async () => {
 		await api.submitScore(score)
 	}
 	catch (err) {
+		console.error(err)
+
 		document.querySelector('#status > h1').textContent = 'Error'
 		document.querySelector('#status > h2').textContent = 'Failed to submit score.'
 

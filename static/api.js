@@ -2,7 +2,7 @@ const {URL} = require('url')
 
 const api = {
 	'login': async () => {
-		const res = await fetch(new URL('/login', apiBase).toString(), apiBase, {
+		const res = await fetch(new URL('/login', apiBase).toString(), {
 			'method': 'POST',
 			'body': JSON.stringify({
 				'username': username,
@@ -24,7 +24,7 @@ const api = {
 		syncData.highscore = parsedBody.highscore
 	},
 	'submitScore': async (score) => {
-		const res = await fetch(new URL('/submitScore', apiBase).toString(), apiBase, {
+		const res = await fetch(new URL('/submitScore', apiBase).toString(), {
 			'method': 'POST',
 			'body': JSON.stringify({
 				'username': username,
