@@ -22,6 +22,7 @@ const api = {
 		const parsedBody = await res.json()
 
 		syncData.highscore = parsedBody.highscore
+		syncData.returningPlayer = parsedBody.returningPlayer
 	},
 	'submitScore': async (score) => {
 		const res = await fetch(new URL('/submitScore', apiBase).toString(), {

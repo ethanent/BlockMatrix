@@ -1,5 +1,3 @@
-document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
-
 ;(async() => {
 	console.log('Logging in!')
 
@@ -17,7 +15,12 @@ document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
 		await poky(800)
 	}
 
-	await poky(400)
+	if (syncData.returningPlayer) {
+		document.querySelector('#status > h1').textContent = 'Welcome back, ' + name[0] + '.'
+	}
+	else document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
+
+	await poky(1000)
 
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#copyright').style.display = 'none'
