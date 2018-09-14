@@ -130,6 +130,10 @@ const gameLoop = () => {
 			addEnemy()
 		}
 	})
+}
+
+const render = () => {
+	// Clear all entities currently loaded
 
 	renderer.clear()
 	renderer.add(new canvax.Rectangle(gameState.location.x, gameState.location.y, gameState.size, gameState.size, '#FA9600', 'none'))
@@ -151,6 +155,10 @@ const gameLoop = () => {
 	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Arial', '#000000', 'end', 500))
 
 	renderer.render()
+
+	window.requestAnimationFrame(render)
 }
+
+window.requestAnimationFrame(render)
 
 setInterval(gameLoop, 10)
