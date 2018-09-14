@@ -26,15 +26,38 @@ let gameState = {
 	},
 	'vel': 0,
 	'entities': [],
-	'score': 0
+	'score': 0,
+	'activePowerup': null
+}
+
+const randomCoordsInRange = () => [Math.floor(Math.random() * (renderer.element.width - 200)) + 100, Math.floor(Math.random() * (renderer.element.height - 200)) + 100]
+
+const randomSafeLocation = () => {
+	let coords = randomCoordsInRange()
+
+	while (pointDist(coords, [gameState.location.x, gameState.location.y]) < 300) {
+		console.log('Repick point ' + coords)
+
+		coords = randomCoordsInRange()
+	}
+
+	console.log('Random coords: ' + coords)
+
+	return {
+		'x': coords[0],
+		'y': coords[1]
+	}
 }
 
 const addGoal = () => gameState.entities.push({
 	'type': 'goal',
-	'location': {
-		'x': Math.floor(Math.random() * (renderer.element.width - 200)) + 100,
-		'y': Math.floor(Math.random() * (renderer.element.height - 200)) + 100
-	}
+	'location': randomSafeLocation()
+})
+
+const addPowerUp = () => gameState.entities.push({
+	'type': 'powerup',
+	'location': randomSafeLocation(),
+	'kind': ['slow'][Math.floor(Math.random() * 1)]
 })
 
 const addEnemy = () => {
@@ -45,7 +68,7 @@ const addEnemy = () => {
 		'direction': direction,
 		'location': {
 			'x': direction === 'up' || direction === 'down' ? Math.floor(Math.random() * renderer.element.width) : (direction === 'right' ? 20 : renderer.element.width - 20),
-			'y': direction === 'left' || direction === 'right' ? Math.floor(Math.random() * renderer.element.width) : (direction === 'up' ? 20 : renderer.element.height - 20)
+			'y': direction === 'left' || direction === 'right' ? Math.floor(Math.random() * renderer.element.height) : (direction === 'up' ? 20 : renderer.element.height - 20)
 		},
 		'multiplier': (Math.floor(Math.random() * 40) + 50) * 0.01
 	})
@@ -78,12 +101,19 @@ const gameLoop = () => {
 
 	let goal = gameState.entities.find((ent) => ent.type === 'goal')
 
-	if (goal && pointDist([gameState.location.x, gameState.location.y], [goal.location.x - 20, goal.location.y - 20]) < 60) {
-		console.log('touch')
+	if (goal && pointDist([gameState.location.x, gameState.location.y], [goal.location.x - 20, goal.location.y - 20]) < 65) {
+		console.log('Scored a point')
 
 		gameState.entities.splice(gameState.entities.findIndex((ent) => ent.type === 'goal'), 1)
 
 		gameState.score++
+
+		if (gameState.activePowerup && gameState.activePowerup.expires >= gameState.score) gameState.activePowerup = null
+
+		if (gameState.score % 5 === 0 && gameState.entities.findIndex((entity) => entity.type === 'powerup') === -1 && !gameState.activePowerup) {
+			console.log('Adding powerup')
+			addPowerUp()
+		}
 
 		addGoal()
 		addEnemy()
@@ -92,7 +122,11 @@ const gameLoop = () => {
 	// Update enemies, perform calculations
 
 	gameState.entities.filter((entity) => entity.type === 'dot').forEach((dot) => {
-		const moveAmount = dot.multiplier * gameState.vel
+		let moveAmount = dot.multiplier * gameState.vel
+
+		if (gameState.activePowerup && gameState.activePowerup.kind === 'slow') {
+			moveAmount *= 0.2
+		}
 
 		if (dot.direction === 'up') {
 			dot.location.y += moveAmount
@@ -126,8 +160,27 @@ const gameLoop = () => {
 				'y': 0
 			}
 			gameState.score = 0
+			gameState.activePowerup = null
+
 			addGoal()
 			addEnemy()
+		}
+	})
+
+	// Check for powerup activations
+
+	gameState.entities.filter((entity) => entity.type === 'powerup').forEach((powerup) => {
+		if (pointDist([gameState.location.x, gameState.location.y], [powerup.location.x - 30, powerup.location.y - 30]) < 50) {
+			console.log('Activating powerup.')
+
+			if (powerup.kind === 'slow') {
+				gameState.activePowerup = {
+					'type': 'slow',
+					'expires': gameState.score + 1
+				}
+			}
+
+			gameState.entities.splice(gameState.entities.findIndex((entity) => entity.type === 'powerup'), 1)
 		}
 	})
 }
@@ -147,6 +200,10 @@ const render = () => {
 
 		if (entity.type === 'dot') {
 			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 25, '#E74C3C', 'none'))
+		}
+
+		if (entity.type === 'powerup') {
+			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 28, '#3498DB', 'none'))
 		}
 	})
 
