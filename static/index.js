@@ -42,6 +42,7 @@ const gameEnded = async () => {
 	console.log('Game over! Score: ' + score)
 
 	document.querySelector('#status > h1').textContent = 'Hold on.'
+	document.querySelector('#status > h2').textContent = 'Uploading game data...'
 
 	document.querySelector('#game').style.display = 'none'
 	document.querySelector('#status').style.display = 'block'
@@ -56,12 +57,12 @@ const gameEnded = async () => {
 		console.error(err)
 
 		document.querySelector('#status > h1').textContent = 'Error'
-		document.querySelector('#status > h2').textContent = 'Failed to submit score.'
+		document.querySelector('#status > h2').textContent = 'Failed to upload game data.'
 
-		await poky(800)
+		await poky(500)
 	}
 
-	await poky(400)
+	await poky(600)
 
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#score').style.display = 'block'
