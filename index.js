@@ -1,4 +1,4 @@
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Menu, MenuItem} = require('electron')
 const path = require('path')
 
 app.on('ready', () => {
@@ -10,13 +10,34 @@ app.on('ready', () => {
 		'useContentSize': true
 	})
 
-	window.setMenu(null)
+	const mainMenu = Menu.buildFromTemplate([
+		{
+			'label': 'Game',
+			'submenu': [
+				{
+					'label': 'View High Scores',
+					'click': () => {
+						let newHighScoresWindow = new BrowserWindow({
+							'resizable': false,
+							'title': 'BlockMatrix High Scores',
+							'width': 600,
+							'height': 900,
+							'useContentSize': true
+						})
+
+						newHighScoresWindow.loadURL('file://' + path.join(__dirname, 'static', 'highscores.html'))
+					}
+				},
+				{
+					'role': 'quit'
+				}
+			]
+		}
+	])
+
+	Menu.setApplicationMenu(mainMenu)
 
 	window.loadURL('file://' + path.join(__dirname, 'static', 'index.html'))
-
-	/*window.webContents.on('devtools-opened', () => {
-		window.webContents.closeDevTools()
-	})*/
 
 	window.on('close', () => {
 		process.exit(0)
