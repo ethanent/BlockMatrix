@@ -192,11 +192,19 @@ const gameLoop = () => {
 			}
 
 			if (powerup.kind === 'eliminator') {
-				gameState.entities.forEach((entity, i) => {
+				let eliminated = 0
+
+				for (let i = 0; i < gameState.entities.length; i++) {
+					if (eliminated > 4) break
+
+					let entity = gameState.entities[i]
+
 					if (entity.type === 'dot') {
-						if (Math.floor(Math.random() * 3) === 1) gameState.entities.splice(i, 1)
+						gameState.entities.splice(i, 1)
+
+						eliminated++
 					}
-				})
+				}
 			}
 
 			playSoundEffect('powerup.wav')
