@@ -31,7 +31,11 @@ const defaultGameState = () => {
 		'activePowerup': null,
 		'odometer': 0,
 		'allowMovement': false,
-		'ended': false
+		'ended': false,
+		'stats': {
+			'powerupsUsed': 0
+		},
+		'started': performance.now()
 	}
 }
 
@@ -206,6 +210,8 @@ const gameLoop = () => {
 					}
 				}
 			}
+
+			gameState.stats.powerupsUsed++
 
 			playSoundEffect('powerup.wav')
 

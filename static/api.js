@@ -24,13 +24,14 @@ const api = {
 		syncData.highscore = parsedBody.highscore
 		syncData.returningPlayer = parsedBody.returningPlayer
 	},
-	'submitScore': async (score) => {
+	'submitScore': async (score, stats) => {
 		const res = await fetch(new URL('/submitScore', apiBase).toString(), {
 			'method': 'POST',
 			'body': JSON.stringify({
 				'username': username,
 				'score': score,
-				'gameVersion': version
+				'gameVersion': version,
+				'stats': stats
 			})
 		})
 

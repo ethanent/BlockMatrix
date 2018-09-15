@@ -47,8 +47,10 @@ const gameEnded = async () => {
 	document.querySelector('#status').style.display = 'block'
 	document.querySelector('#copyright').style.display = 'block'
 
+	gameState.stats.duration = Math.round(performance.now() - gameState.started)
+
 	try {
-		await api.submitScore(score)
+		await api.submitScore(score, gameState.stats)
 	}
 	catch (err) {
 		console.error(err)
