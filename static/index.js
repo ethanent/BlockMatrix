@@ -89,7 +89,3 @@ const gameEnded = async () => {
 
 	startGame()
 }
-
-const openSite = () => {
-	shell.openExternal('https://ethanent.me')
-}

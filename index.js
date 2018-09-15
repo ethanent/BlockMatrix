@@ -29,6 +29,9 @@ app.on('ready', () => {
 					}
 				},
 				{
+					'role': 'close'
+				},
+				{
 					'role': 'quit'
 				}
 			]

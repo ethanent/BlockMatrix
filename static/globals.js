@@ -21,3 +21,7 @@ const syncData = {
 	'highscore': 0,
 	'returningPlayer': false
 }
+
+const openSite = () => {
+	shell.openExternal('https://ethanent.me')
+}
