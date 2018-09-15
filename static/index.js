@@ -37,7 +37,7 @@ const gameEnded = async () => {
 
 	let {score} = gameState
 
-	await poky(700)
+	await poky(1000)
 
 	console.log('Game over! Score: ' + score)
 
