@@ -120,7 +120,7 @@ const gameLoop = () => {
 
 	let goal = gameState.entities.find((ent) => ent.type === 'goal')
 
-	if (goal && pointDist([gameState.location.x, gameState.location.y], [goal.location.x - 20, goal.location.y - 20]) < 65) {
+	if (!gameState.ended && goal && pointDist([gameState.location.x, gameState.location.y], [goal.location.x - 20, goal.location.y - 20]) < 65) {
 		gameState.entities.splice(gameState.entities.findIndex((ent) => ent.type === 'goal'), 1)
 
 		gameState.score++
@@ -184,7 +184,7 @@ const gameLoop = () => {
 
 	// Check for powerup activations
 
-	gameState.entities.filter((entity) => entity.type === 'powerup').forEach((powerup) => {
+	if (!gameState.ended) gameState.entities.filter((entity) => entity.type === 'powerup').forEach((powerup) => {
 		if (pointDist([gameState.location.x, gameState.location.y], [powerup.location.x - 30, powerup.location.y - 30]) < 50) {
 			console.log('Activating powerup.')
 
