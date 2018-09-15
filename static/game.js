@@ -105,8 +105,8 @@ const gameLoop = () => {
 	gameState.location.y += gameState.accel.y
 	gameState.location.x += gameState.accel.x
 
-	gameState.accel.y *= 0.91
-	gameState.accel.x *= 0.91
+	gameState.accel.y *= 0.92
+	gameState.accel.x *= 0.92
 
 	gameState.vel = Math.abs(gameState.accel.x) + Math.abs(gameState.accel.y)
 
