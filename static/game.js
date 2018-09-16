@@ -70,17 +70,23 @@ const addPowerUp = () => gameState.entities.push({
 })
 
 const addEnemy = () => {
-	let direction = ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)]
+	let enemyData
 
-	gameState.entities.push({
-		'type': 'dot',
-		'direction': direction,
-		'location': {
-			'x': direction === 'up' || direction === 'down' ? Math.floor(Math.random() * renderer.element.width) : (direction === 'right' ? 20 : renderer.element.width - 20),
-			'y': direction === 'left' || direction === 'right' ? Math.floor(Math.random() * renderer.element.height) : (direction === 'up' ? 20 : renderer.element.height - 20)
-		},
-		'multiplier': (Math.floor(Math.random() * 60) + 50) * 0.01
-	})
+	while (!enemyData || pointDist([gameState.location.x, gameState.location.y], [enemyData.location.x, enemyData.location.y]) < 300) {
+		let direction = ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)]
+
+		enemyData = {
+			'type': 'dot',
+			'direction': direction,
+			'location': {
+				'x': direction === 'up' || direction === 'down' ? Math.floor(Math.random() * renderer.element.width) : (direction === 'right' ? 20 : renderer.element.width - 20),
+				'y': direction === 'left' || direction === 'right' ? Math.floor(Math.random() * renderer.element.height) : (direction === 'up' ? 20 : renderer.element.height - 20)
+			},
+			'multiplier': (Math.floor(Math.random() * 60) + 50) * 0.01
+		}
+	}
+
+	gameState.entities.push(enemyData)
 }
 
 const startGame = () => {
@@ -197,9 +203,10 @@ const gameLoop = () => {
 
 			if (powerup.kind === 'eliminator') {
 				let eliminated = 0
+				let eliminateCount = 4 + Math.floor(Math.random() * 2)
 
 				for (let i = 0; i < gameState.entities.length; i++) {
-					if (eliminated > 4) break
+					if (eliminated >= eliminateCount) break
 
 					let entity = gameState.entities[i]
 
