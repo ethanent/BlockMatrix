@@ -6,7 +6,7 @@ app.on('ready', () => {
 		'resizable': false,
 		'title': 'BlockMatrix',
 		'width': 1205,
-		'height': 905,
+		'height': 903,
 		'useContentSize': true
 	})
 

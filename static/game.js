@@ -122,6 +122,12 @@ const gameLoop = () => {
 
 	gameState.odometer += gameState.vel
 
+	// Check for powerup expiry
+
+	if (gameState.activePowerup) {
+		if (gameState.odometer > gameState.activePowerup.expires) gameState.activePowerup = null
+	}
+
 	// Check for goal touching
 
 	let goal = gameState.entities.find((ent) => ent.type === 'goal')
@@ -132,8 +138,6 @@ const gameLoop = () => {
 		gameState.score++
 
 		if (gameState.score > 10) document.body.style.backgroundColor = '#000000'
-
-		if (gameState.activePowerup && gameState.score >= gameState.activePowerup.expires) gameState.activePowerup = null
 
 		if (gameState.score % 5 === 0 && gameState.entities.findIndex((entity) => entity.type === 'powerup') === -1 && !gameState.activePowerup) {
 			addPowerUp()
@@ -151,7 +155,7 @@ const gameLoop = () => {
 		let moveAmount = dot.multiplier * gameState.vel
 
 		if (gameState.activePowerup && gameState.activePowerup.kind === 'slow') {
-			moveAmount *= 0.2
+			moveAmount *= 0.1
 		}
 
 		if (dot.direction === 'up') {
@@ -197,7 +201,8 @@ const gameLoop = () => {
 			if (powerup.kind === 'slow') {
 				gameState.activePowerup = {
 					'kind': 'slow',
-					'expires': gameState.score + 2
+					'expires': gameState.odometer + 2200,
+					'startedAt': gameState.odometer
 				}
 			}
 
@@ -252,6 +257,10 @@ const render = () => {
 	// Render score
 
 	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Arial', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'end', 500))
+
+	// Render powerup progress bar if needed
+
+	if (gameState.activePowerup) renderer.add(new canvax.Rectangle(0, renderer.element.height - 10, ((gameState.odometer - gameState.activePowerup.startedAt) / (gameState.activePowerup.expires - gameState.activePowerup.startedAt)) * renderer.element.width, 10, '#00A388', 'none'))
 
 	renderer.render()
 
