@@ -66,7 +66,7 @@ const addGoal = () => gameState.entities.push({
 const addPowerUp = () => gameState.entities.push({
 	'type': 'powerup',
 	'location': randomSafeLocation(),
-	'kind': ['slow', 'eliminator'][Math.floor(Math.random() * 2)]
+	'kind': ['slow', 'destroy'][Math.floor(Math.random() * 2)]
 })
 
 const addEnemy = () => {
@@ -151,7 +151,11 @@ const gameLoop = () => {
 
 	// Update enemies, perform calculations
 
-	gameState.entities.filter((entity) => entity.type === 'dot').forEach((dot) => {
+	gameState.entities.map((entity, i) => {
+		return Object.assign(entity, {
+			'index': i
+		})
+	}).filter((entity) => entity.type === 'dot').forEach((dot) => {
 		let moveAmount = dot.multiplier * gameState.vel
 
 		if (gameState.activePowerup && gameState.activePowerup.kind === 'slow') {
@@ -180,15 +184,22 @@ const gameLoop = () => {
 		}
 
 		if (pointDist([gameState.location.x, gameState.location.y], [dot.location.x - 30, dot.location.y - 30]) < 50) {
-			if (gameState.ended) return
+			if (gameState.activePowerup && gameState.activePowerup.kind === 'destroy') {
+				playSoundEffect('destroy.wav')
 
-			gameState.ended = true
+				gameState.entities.splice(dot.index, 1)
+			}
+			else {
+				if (gameState.ended) return
 
-			gameState.allowMovement = false
+				gameState.ended = true
 
-			document.body.style.backgroundColor = '#F2F2F0'
+				gameState.allowMovement = false
 
-			gameEnded()
+				document.body.style.backgroundColor = '#F2F2F0'
+
+				gameEnded()
+			}
 		}
 	})
 
@@ -201,25 +212,16 @@ const gameLoop = () => {
 			if (powerup.kind === 'slow') {
 				gameState.activePowerup = {
 					'kind': 'slow',
-					'expires': gameState.odometer + 2200,
+					'expires': gameState.odometer + 2600,
 					'startedAt': gameState.odometer
 				}
 			}
 
-			if (powerup.kind === 'eliminator') {
-				let eliminated = 0
-				let eliminateCount = 4 + Math.floor(Math.random() * 2)
-
-				for (let i = 0; i < gameState.entities.length; i++) {
-					if (eliminated >= eliminateCount) break
-
-					let entity = gameState.entities[i]
-
-					if (entity.type === 'dot') {
-						gameState.entities.splice(i, 1)
-
-						eliminated++
-					}
+			if (powerup.kind === 'destroy') {
+				gameState.activePowerup = {
+					'kind': 'destroy',
+					'expires': gameState.odometer + 1500,
+					'startedAt': gameState.odometer
 				}
 			}
 
@@ -236,7 +238,10 @@ const render = () => {
 	// Clear all entities currently loaded
 
 	renderer.clear()
-	renderer.add(new canvax.Rectangle(gameState.location.x, gameState.location.y, gameState.size, gameState.size, '#FA9600', 'none'))
+
+	let renderBlockColor = (gameState.activePowerup && gameState.activePowerup.kind === 'destroy' ? '#3498DB' : '#FA9600')
+
+	renderer.add(new canvax.Rectangle(gameState.location.x, gameState.location.y, gameState.size, gameState.size, renderBlockColor, 'none'))
 
 	// Render all entities
 
@@ -260,7 +265,7 @@ const render = () => {
 
 	// Render powerup progress bar if needed
 
-	if (gameState.activePowerup) renderer.add(new canvax.Rectangle(0, renderer.element.height - 10, ((gameState.odometer - gameState.activePowerup.startedAt) / (gameState.activePowerup.expires - gameState.activePowerup.startedAt)) * renderer.element.width, 10, '#00A388', 'none'))
+	if (gameState.activePowerup) renderer.add(new canvax.Rectangle(0, renderer.element.height - 15, ((gameState.odometer - gameState.activePowerup.startedAt) / (gameState.activePowerup.expires - gameState.activePowerup.startedAt)) * renderer.element.width, 15, '#00A388', 'none'))
 
 	renderer.render()
 
