@@ -39,6 +39,8 @@ const gameEnded = async () => {
 
 	await poky(1000)
 
+	document.body.style.backgroundColor = '#F2F2F0'
+
 	console.log('Game over! Score: ' + score)
 
 	document.querySelector('#status > h1').textContent = 'Hold on.'

@@ -196,7 +196,7 @@ const gameLoop = () => {
 
 				gameState.allowMovement = false
 
-				document.body.style.backgroundColor = '#F2F2F0'
+				document.body.style.backgroundColor = '#C33325'
 
 				gameEnded()
 			}
