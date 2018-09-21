@@ -29,6 +29,15 @@ app.on('ready', () => {
 					}
 				},
 				{
+					'label': 'Game Audio',
+					'type': 'checkbox',
+					'checked': true,
+					'click': () => {
+						window.webContents.setAudioMuted(!window.webContents.isAudioMuted())
+						this.checked = window.webContents.isAudioMuted()
+					}
+				},
+				{
 					'role': 'close'
 				},
 				{
