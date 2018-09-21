@@ -17,9 +17,10 @@ const username = os.userInfo().username.toLowerCase()
 
 const name = parseUsername(username)
 
-const syncData = {
+let syncData = {
 	'highscore': 0,
-	'returningPlayer': false
+	'returningPlayer': false,
+	'gamesPlayed': 0
 }
 
 const openSite = () => {

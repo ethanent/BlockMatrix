@@ -37,6 +37,8 @@ const gameEnded = async () => {
 
 	let {score} = gameState
 
+	syncData.gamesPlayed++
+
 	await poky(1000)
 
 	document.body.style.backgroundColor = '#F2F2F0'
@@ -74,15 +76,17 @@ const gameEnded = async () => {
 
 		playSoundEffect('highscore.wav')
 
-		document.querySelector('#score > h1').textContent = 'New highscore!'
+		document.querySelector('#score > h1').textContent = score
 
-		document.querySelector('#score > h2').textContent = 'You scored ' + syncData.highscore + '.'
+		document.querySelector('#score > h2').textContent = 'That\'s a new highscore!'
 	}
 	else {
-		document.querySelector('#score > h1').textContent = 'You scored ' + score + '.'
+		document.querySelector('#score > h1').textContent = score
 
 		document.querySelector('#score > h2').textContent = 'Your highscore is ' + syncData.highscore + '.'
 	}
+
+	document.querySelector('#score > p').textContent = 'You\'ve played ' + syncData.gamesPlayed + ' games.'
 
 	await poky(2000)
 

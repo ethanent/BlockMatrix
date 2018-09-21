@@ -50,6 +50,13 @@ header {
 	text-align: center;
 }
 
+#score > h1 {
+	font-size: 5em;
+
+	padding-bottom: none;
+	margin-bottom: none;
+}
+
 #copyright {
 	margin-top: 30vh;
 
