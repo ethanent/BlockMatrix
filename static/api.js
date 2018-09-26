@@ -39,7 +39,11 @@ const api = {
 		}
 	},
 	'getHighScores': async () => {
-		const res = await fetch(new URL('/getHighScores', apiBase).toString(), {
+		const highscoreURL = new URL('/getHighScores', apiBase)
+
+		highscoreURL.searchParams.set('version', version)
+
+		const res = await fetch(highscoreURL.toString(), {
 			'method': 'POST'
 		})
 
