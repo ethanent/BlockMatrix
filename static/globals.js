@@ -13,7 +13,7 @@ const packageInfo = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'packa
 const {version} = packageInfo
 const apiBase = packageInfo.game.apiBase
 
-const username = 'ethan.davis'//os.userInfo().username.toLowerCase()
+const username = os.userInfo().username.toLowerCase()
 
 const name = parseUsername(username)
 
