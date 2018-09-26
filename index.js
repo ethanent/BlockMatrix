@@ -5,8 +5,8 @@ app.on('ready', () => {
 	const window = new BrowserWindow({
 		'resizable': false,
 		'title': 'BlockMatrix',
-		'width': 1225,
-		'height': 925,
+		'width': 1215,
+		'height': 920,
 		'useContentSize': true
 	})
 

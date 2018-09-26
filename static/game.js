@@ -25,6 +25,7 @@ const defaultGameState = () => {
 			'x': 0,
 			'y': 0
 		},
+		'globalAccelEffect': 0,
 		'vel': 0,
 		'entities': [],
 		'score': 0,
@@ -35,7 +36,8 @@ const defaultGameState = () => {
 		'stats': {
 			'powerupsUsed': 0
 		},
-		'started': performance.now()
+		'started': performance.now(),
+		'highscorePosition': -1
 	}
 }
 
@@ -89,8 +91,12 @@ const addEnemy = () => {
 	gameState.entities.push(enemyData)
 }
 
-const startGame = () => {
+const startGame = async () => {
 	gameState = defaultGameState()
+
+	const highScores = await api.getHighScores()
+
+	gameState.highscorePosition = highScores.findIndex((score) => score.username === username)
 
 	gameState.allowMovement = true
 
@@ -115,8 +121,8 @@ const gameLoop = () => {
 	gameState.location.y += gameState.accel.y
 	gameState.location.x += gameState.accel.x
 
-	gameState.accel.y *= 0.92
-	gameState.accel.x *= 0.92
+	gameState.accel.y *= 0.92 + gameState.globalAccelEffect
+	gameState.accel.x *= 0.92 + gameState.globalAccelEffect
 
 	gameState.vel = Math.abs(gameState.accel.x) + Math.abs(gameState.accel.y)
 
@@ -136,6 +142,12 @@ const gameLoop = () => {
 		gameState.entities.splice(gameState.entities.findIndex((ent) => ent.type === 'goal'), 1)
 
 		gameState.score++
+
+		if (gameState.score % 37 === 0 && gameState.globalAccelEffect < 0.006) {
+			gameState.globalAccelEffect += 0.002
+
+			console.log('Updated globalAccelEffect to ' + gameState.globalAccelEffect)
+		}
 
 		if (gameState.score > 10) document.body.style.backgroundColor = '#000000'
 
@@ -239,7 +251,22 @@ const render = () => {
 
 	renderer.clear()
 
-	let renderBlockColor = (gameState.activePowerup && gameState.activePowerup.kind === 'destroy' ? '#3498DB' : '#FA9600')
+	let renderBlockColor = (gameState.activePowerup && gameState.activePowerup.kind === 'destroy' ? '#3498DB' : false)
+
+	if (renderBlockColor === false) {
+		if (gameState.highscorePosition === 0) {
+			renderBlockColor = '#FFCA09'
+		}
+		else if (gameState.highscorePosition === 1) {
+			renderBlockColor = '#B6B5B8'
+		}
+		else if (gameState.highscorePosition === 2) {
+			renderBlockColor = '#9C893A'
+		}
+		else {
+			renderBlockColor = '#FFBB59'
+		}
+	}
 
 	renderer.add(new canvax.Rectangle(gameState.location.x, gameState.location.y, gameState.size, gameState.size, renderBlockColor, 'none'))
 
