@@ -54,5 +54,21 @@ const api = {
 		const parsedBody = await res.json()
 
 		return parsedBody
+	},
+	'getUserStats': async (username) => {
+		const res = await fetch(new URL('/fetchUserStats', apiBase), {
+			'method': 'POST',
+			'body': JSON.stringify({
+				'username': username
+			})
+		})
+
+		if (res.status !== 200) {
+			throw new Error('Non-200 status from API server.')
+		}
+
+		const parsedBody = await res.json()
+
+		return parsedBody
 	}
 }

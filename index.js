@@ -12,6 +12,17 @@ app.on('ready', () => {
 
 	const mainMenu = Menu.buildFromTemplate([
 		{
+			'label': 'File',
+			'submenu': [
+				{
+					'role': 'close'
+				},
+				{
+					'role': 'quit'
+				}
+			]
+		},
+		{
 			'label': 'Game',
 			'submenu': [
 				{
@@ -36,12 +47,6 @@ app.on('ready', () => {
 						window.webContents.setAudioMuted(!window.webContents.isAudioMuted())
 						this.checked = window.webContents.isAudioMuted()
 					}
-				},
-				{
-					'role': 'close'
-				},
-				{
-					'role': 'quit'
 				}
 			]
 		}

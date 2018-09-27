@@ -67,13 +67,24 @@ canvas {
 }
 
 #copyright {
-	margin-top: 30vh;
+	margin-top: 10vh;
 
 	text-align: center;
 }
 
 #renderScores {
 	padding-left: 5vw;
+}
+
+#userinfo {
+	display: none;
+
+	padding-left: 6vw;
+}
+
+#userinfo:nth-child(0), #userinfo:nth-child(1) {
+	margin-top: none;
+	margin-bottom: 2vh;
 }
 
 .highscore {
