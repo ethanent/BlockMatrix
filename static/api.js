@@ -3,7 +3,7 @@ const c = require('centra')
 
 const api = {
 	'login': async () => {
-		const res = await c(apiBase, 'POST').path('/login').body({
+		const res = await c(apiBase, 'POST').path('/login').timeout(6000).body({
 			'username': username,
 			'system': {
 				'platform': os.platform(),
@@ -23,7 +23,7 @@ const api = {
 		syncData = parsedBody
 	},
 	'submitScore': async (score, stats) => {
-		const res = await c(apiBase, 'POST').path('/submitScore').body({
+		const res = await c(apiBase, 'POST').path('/submitScore').timeout(6000).body({
 			'username': username,
 			'score': score,
 			'gameVersion': version,
@@ -36,7 +36,7 @@ const api = {
 		else console.log('Submitted game to server successfully!')
 	},
 	'getHighScores': async () => {
-		const res = await c(apiBase, 'POST').path('/getHighScores').query('version', version).send()
+		const res = await c(apiBase, 'POST').path('/getHighScores').timeout(6000).query('version', version).send()
 
 		if (res.statusCode !== 200) {
 			throw new Error('Non-200 status code from API server.')

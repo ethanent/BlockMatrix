@@ -95,9 +95,15 @@ const addEnemy = () => {
 const startGame = async () => {
 	gameState = defaultGameState()
 
-	const highScores = await api.getHighScores()
+	try {
+		const highScores = await api.getHighScores()
 
-	gameState.highscorePosition = highScores.findIndex((score) => score.username === username)
+		gameState.highscorePosition = highScores.findIndex((score) => score.username === username)
+	}
+	catch (err) {
+		console.error(err)
+		console.log('Failed to fetch high scores.')
+	}
 
 	gameState.allowMovement = true
 
