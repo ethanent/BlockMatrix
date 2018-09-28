@@ -1,71 +1,61 @@
 const {URL} = require('url')
+const c = require('centra')
 
 const api = {
 	'login': async () => {
-		const res = await fetch(new URL('/login', apiBase).toString(), {
-			'method': 'POST',
-			'body': JSON.stringify({
-				'username': username,
-				'system': {
-					'platform': os.platform(),
-					'uptime': os.uptime(),
-					'memory': os.totalmem()
-				},
-				'gameVersion': version
-			})
-		})
+		const res = await c(apiBase, 'POST').path('/login').body({
+			'username': username,
+			'system': {
+				'platform': os.platform(),
+				'uptime': os.uptime(),
+				'memory': os.totalmem()
+			},
+			'gameVersion': version
+		}).send()
 
-		if (res.status !== 200) {
-			throw new Error('Non-200 status code from API server.')
+		if (res.statusCode !== 200) {
+			throw new Error('Non-200 status code from API server. ' + res.statusCode)
 		}
+		else console.log('Logged in successfully!')
 
 		const parsedBody = await res.json()
 
 		syncData = parsedBody
 	},
 	'submitScore': async (score, stats) => {
-		const res = await fetch(new URL('/submitScore', apiBase).toString(), {
-			'method': 'POST',
-			'body': JSON.stringify({
-				'username': username,
-				'score': score,
-				'gameVersion': version,
-				'stats': stats
-			})
-		})
+		const res = await c(apiBase, 'POST').path('/submitScore').body({
+			'username': username,
+			'score': score,
+			'gameVersion': version,
+			'stats': stats
+		}).send()
 
-		if (res.status !== 200) {
+		if (res.statusCode !== 200) {
 			throw new Error('Non-200 status code from API server.')
 		}
+		else console.log('Submitted game to server successfully!')
 	},
 	'getHighScores': async () => {
-		const highscoreURL = new URL('/getHighScores', apiBase)
+		const res = await c(apiBase, 'POST').path('/getHighScores').query('version', version).send()
 
-		highscoreURL.searchParams.set('version', version)
-
-		const res = await fetch(highscoreURL.toString(), {
-			'method': 'POST'
-		})
-
-		if (res.status !== 200) {
+		if (res.statusCode !== 200) {
 			throw new Error('Non-200 status code from API server.')
 		}
+		else console.log('Retrieved high scores successfully!')
 
 		const parsedBody = await res.json()
 
 		return parsedBody
 	},
 	'getUserStats': async (username) => {
-		const res = await fetch(new URL('/fetchUserStats', apiBase), {
-			'method': 'POST',
-			'body': JSON.stringify({
-				'username': username
-			})
-		})
+		const res = await c(apiBase, 'POST').path('/fetchUserStats').body({
+			'username': username
+		}).send()
 
-		if (res.status !== 200) {
+		if (res.statusCode !== 200) {
 			throw new Error('Non-200 status from API server.')
 		}
+		else console.log('Retrieved user stats successfully!')
 
 		const parsedBody = await res.json()
 
