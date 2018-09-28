@@ -34,7 +34,8 @@ const defaultGameState = () => {
 		'allowMovement': false,
 		'ended': false,
 		'stats': {
-			'powerupsUsed': 0
+			'powerupsUsed': 0,
+			'dotsEaten': 0
 		},
 		'started': performance.now(),
 		'highscorePosition': -1
@@ -200,6 +201,8 @@ const gameLoop = () => {
 				playSoundEffect('destroy.wav')
 
 				gameState.entities.splice(dot.index, 1)
+
+				gameState.stats.dotsEaten++
 			}
 			else {
 				if (gameState.ended) return
