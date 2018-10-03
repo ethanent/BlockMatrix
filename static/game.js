@@ -69,7 +69,7 @@ const addGoal = () => gameState.entities.push({
 const addPowerUp = () => gameState.entities.push({
 	'type': 'powerup',
 	'location': randomSafeLocation(),
-	'kind': ['slow', 'destroy'][Math.floor(Math.random() * 2)]
+	'kind': ['slow', 'destroy', 'blink'][Math.floor(Math.random() * 3)]
 })
 
 const addEnemy = () => {
@@ -246,6 +246,14 @@ const gameLoop = () => {
 				}
 			}
 
+			if (powerup.kind === 'blink') {
+				gameState.activePowerup = {
+					'kind': 'blink',
+					'expires': gameState.odometer + 2600,
+					'startedAt': gameState.odometer
+				}
+			}
+
 			gameState.stats.powerupsUsed++
 
 			playSoundEffect('powerup.wav')
@@ -287,6 +295,8 @@ const render = () => {
 		}
 
 		if (entity.type === 'dot') {
+			if (gameState.activePowerup && gameState.activePowerup.kind === 'blink' && !gameState.ended && gameState.odometer % 300 < 150) return
+
 			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 25, '#E74C3C', 'none'))
 		}
 
