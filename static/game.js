@@ -37,8 +37,10 @@ const defaultGameState = () => {
 			'powerupsUsed': 0,
 			'dotsEaten': 0
 		},
+		'lastGoalReach': 0,
 		'started': performance.now(),
-		'highscorePosition': -1
+		'highscorePosition': -1,
+		'blink': false
 	}
 }
 
@@ -69,7 +71,7 @@ const addGoal = () => gameState.entities.push({
 const addPowerUp = () => gameState.entities.push({
 	'type': 'powerup',
 	'location': randomSafeLocation(),
-	'kind': ['slow', 'destroy', 'blink'][Math.floor(Math.random() * 3)]
+	'kind': ['slow', 'destroy', 'rotate'][Math.floor(Math.random() * 3)]
 })
 
 const addEnemy = () => {
@@ -149,14 +151,13 @@ const gameLoop = () => {
 		gameState.entities.splice(gameState.entities.findIndex((ent) => ent.type === 'goal'), 1)
 
 		gameState.score++
+		gameState.lastGoalReach = gameState.odometer
 
 		if (gameState.score % 37 === 0 && gameState.globalAccelEffect < 0.006) {
 			gameState.globalAccelEffect += 0.002
 
 			console.log('Updated globalAccelEffect to ' + gameState.globalAccelEffect)
 		}
-
-		if (gameState.score > 10) document.body.style.backgroundColor = '#000000'
 
 		if (gameState.score % 5 === 0 && gameState.entities.findIndex((entity) => entity.type === 'powerup') === -1 && !gameState.activePowerup) {
 			addPowerUp()
@@ -246,12 +247,38 @@ const gameLoop = () => {
 				}
 			}
 
-			if (powerup.kind === 'blink') {
-				gameState.activePowerup = {
-					'kind': 'blink',
-					'expires': gameState.odometer + 2600,
-					'startedAt': gameState.odometer
-				}
+			if (powerup.kind === 'rotate') {
+				gameState.entities.filter((entity) => entity.type === 'dot').forEach((dot) => {
+					if (dot.direction === 'up') {
+						dot.direction = 'right'
+					}
+					else if (dot.direction === 'right') {
+						dot.direction = 'down'
+					}
+					else if (dot.direction === 'down') {
+						dot.direction = 'left'
+					}
+					else if (dot.direction === 'left') {
+						dot.direction = 'up'
+					}
+
+					if (dot.direction === 'up' || dot.direction === 'down') {
+						if (dot.location.y > gameState.location.y) {
+							dot.direction = 'up'
+						}
+						else {
+							dot.direction = 'down'
+						}
+					}
+					else if (dot.direction === 'left' || dot.direction === 'right') {
+						if (dot.location.x > gameState.location.x) {
+							dot.direction = 'right'
+						}
+						else {
+							dot.direction = 'left'
+						}
+					}
+				})
 			}
 
 			gameState.stats.powerupsUsed++
@@ -261,9 +288,28 @@ const gameLoop = () => {
 			gameState.entities.splice(gameState.entities.findIndex((entity) => entity.type === 'powerup'), 1)
 		}
 	})
+
+	if (gameState.lastGoalReach < gameState.odometer - 3000) {
+		gameState.blink = true
+	}
+	else gameState.blink = false
 }
 
 const render = () => {
+	// Set background color.
+
+	if (!gameState.ended) {
+		if (gameState.blink) {
+			document.body.style.backgroundColor = '#444444'
+		}
+		else if (gameState.score > 10) {
+			document.body.style.backgroundColor = '#000000'
+		}
+		else {
+			document.body.style.backgroundColor = '#F2F2F0'
+		}
+	}
+
 	// Clear all entities currently loaded
 
 	renderer.clear()
@@ -295,7 +341,7 @@ const render = () => {
 		}
 
 		if (entity.type === 'dot') {
-			if (gameState.activePowerup && gameState.activePowerup.kind === 'blink' && !gameState.ended && gameState.odometer % 300 < 150) return
+			if (gameState.blink && !gameState.ended && gameState.odometer % 400 < 200) return
 
 			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 25, '#E74C3C', 'none'))
 		}

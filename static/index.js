@@ -63,10 +63,8 @@ const gameEnded = async () => {
 		document.querySelector('#status > h1').textContent = 'Error'
 		document.querySelector('#status > h2').textContent = 'Failed to upload game data.'
 
-		await poky(500)
+		await poky(800)
 	}
-
-	await poky(600)
 
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#score').style.display = 'block'
