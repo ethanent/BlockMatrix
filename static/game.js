@@ -40,7 +40,9 @@ const defaultGameState = () => {
 		'lastGoalReach': 0,
 		'started': performance.now(),
 		'highscorePosition': -1,
-		'blink': false
+		'blink': false,
+		'backgroundColor': '#F2F2F0',
+		'currentBackgroundColor': '#F2F2F0'
 	}
 }
 
@@ -289,25 +291,36 @@ const gameLoop = () => {
 		}
 	})
 
+	// Enable blink mode if it should be enabled
+
 	if (gameState.lastGoalReach < gameState.odometer - 3000) {
 		gameState.blink = true
 	}
 	else gameState.blink = false
+
+	// Update background color
+
+	if (!gameState.ended) {
+		if (gameState.blink) {
+			gameState.backgroundColor = '#444444'
+		}
+		else if (gameState.score > 10) {
+			gameState.backgroundColor = '#000000'
+		}
+		else {
+			gameState.backgroundColor = '#F2F2F0'
+		}
+	}
 }
 
 const render = () => {
 	// Set background color.
 
-	if (!gameState.ended) {
-		if (gameState.blink) {
-			document.body.style.backgroundColor = '#444444'
-		}
-		else if (gameState.score > 10) {
-			document.body.style.backgroundColor = '#000000'
-		}
-		else {
-			document.body.style.backgroundColor = '#F2F2F0'
-		}
+	if (gameState.currentBackgroundColor !== gameState.backgroundColor) {
+		console.log('Updating game background color.')
+
+		document.body.style.backgroundColor = gameState.backgroundColor
+		gameState.currentBackgroundColor = gameState.backgroundColor
 	}
 
 	// Clear all entities currently loaded
