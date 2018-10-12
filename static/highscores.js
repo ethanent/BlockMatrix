@@ -11,6 +11,8 @@
 		userLink.onclick = async () => {
 			const userInfo = await api.getUserStats(highscore.username)
 
+			document.querySelector('#userinfo_tags').innerHTML = ''
+
 			document.querySelector('#highscores').style.display = 'none'
 			document.querySelector('#userinfo').style.display = 'block'
 
