@@ -359,12 +359,14 @@ const render = () => {
 
 		if (entity.type === 'powerup') {
 			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 25, '#3498DB', 'none'))
+
+			renderer.add(new canvax.Text(entity.location.x, entity.location.y - 30, entity.kind.toUpperCase(), '20px Roboto', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'center', 500))
 		}
 	})
 
 	// Render score
 
-	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Arial', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'end', 500))
+	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Roboto', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'end', 500))
 
 	// Render powerup progress bar if needed
 
