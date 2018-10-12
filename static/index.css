@@ -82,15 +82,15 @@ canvas {
 	padding-left: 6vw;
 }
 
-#userinfo_tag {
-    display: none;
+.userinfo_tag {
+    display: inline;
 
-    border: 1px solid #FFBF00;
+    border: 1px solid #000000;
 
     border-radius: 0.1em;
     padding: 2px;
 
-    color: #FFBF00;
+    color: #000000;
 }
 
 #userinfo:nth-child(0), #userinfo:nth-child(1) {

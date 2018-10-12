@@ -16,11 +16,14 @@
 
 			document.querySelector('#userinfo_name').textContent = combinedName
 
-			if (userInfo.tag) {
-				document.querySelector('#userinfo_tag').style.display = 'inline'
-				document.querySelector('#userinfo_tag').textContent = userInfo.tag
-			}
-			else document.querySelector('#userinfo_tag').style.display = 'none'
+			userInfo.tags.forEach((tag) => {
+				const tagElement = sy('p', {'class': 'userinfo_tag'}, [tag.title])
+
+				tagElement.style.color = tag.color
+				tagElement.style.borderColor = tag.color
+
+				document.querySelector('#userinfo_tags').appendChild(tagElement)
+			})
 
 			document.querySelector('#userinfo_joined').textContent = 'joined ' + userInfo.joined
 
