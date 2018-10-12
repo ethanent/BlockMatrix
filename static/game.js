@@ -69,7 +69,7 @@ const randomSafeLocation = () => {
 	}
 }
 
-const addGoal = () => gameState.entities.push({
+const addGoal = () => gameState.entities.splice(0, 0, {
 	'type': 'goal',
 	'location': randomSafeLocation()
 })
