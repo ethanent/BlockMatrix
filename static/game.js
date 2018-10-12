@@ -274,7 +274,7 @@ const gameLoop = () => {
 	// Check for powerup activations
 
 	if (!gameState.ended) gameState.entities.filter((entity) => entity.type === 'powerup').forEach((powerup) => {
-		if (pointDist([gameState.location.x, gameState.location.y], [powerup.location.x, powerup.location.y]) < 50) {
+		if (pointDist([gameState.location.x, gameState.location.y], [powerup.location.x, powerup.location.y]) < 55) {
 			console.log('Activating powerup.')
 
 			if (powerup.kind === 'slow') {
