@@ -15,8 +15,15 @@
 			document.querySelector('#userinfo').style.display = 'block'
 
 			document.querySelector('#userinfo_name').textContent = combinedName
+
+			if (userInfo.tag) {
+				document.querySelector('#userinfo_tag').style.display = 'inline'
+				document.querySelector('#userinfo_tag').textContent = userInfo.tag
+			}
+			else document.querySelector('#userinfo_tag').style.display = 'none'
+
 			document.querySelector('#userinfo_joined').textContent = 'joined ' + userInfo.joined
-			
+
 			document.querySelector('#stats').innerHTML = ''
 
 			userInfo.stats.forEach((stat) => {

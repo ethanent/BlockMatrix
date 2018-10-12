@@ -67,7 +67,7 @@ canvas {
 }
 
 #copyright {
-	margin-top: 10vh;
+	margin-top: 5vh;
 
 	text-align: center;
 }
@@ -82,9 +82,24 @@ canvas {
 	padding-left: 6vw;
 }
 
+#userinfo_tag {
+    display: none;
+
+    border: 1px solid #FFBF00;
+
+    border-radius: 0.1em;
+    padding: 2px;
+
+    color: #FFBF00;
+}
+
 #userinfo:nth-child(0), #userinfo:nth-child(1) {
 	margin-top: none;
 	margin-bottom: 2vh;
+}
+
+#userinfo > #stats {
+    margin-top: 4vh;
 }
 
 .highscore {
