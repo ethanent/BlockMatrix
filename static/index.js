@@ -1,4 +1,14 @@
 ;(async() => {
+	await poky(100)
+
+	document.querySelector('#splash > img').style.webkitTransform = 'rotate3d(1, 1, 1, 360deg)'
+
+	await poky(2000)
+
+	document.querySelector('#splash').style.display = 'none'
+	
+	document.querySelector('#status').style.display = 'block'
+
 	console.log('Logging in!')
 
 	let loginRes
@@ -65,6 +75,8 @@ const gameEnded = async () => {
 
 		await poky(800)
 	}
+
+	await poky(800)
 
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#score').style.display = 'block'

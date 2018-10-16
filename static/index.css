@@ -48,6 +48,8 @@ canvas {
 }
 
 #status {
+	display: none;
+
 	text-align: center;
 }
 
@@ -67,6 +69,8 @@ canvas {
 }
 
 #copyright {
+	display: none;
+
 	margin-top: 5vh;
 
 	text-align: center;
@@ -76,23 +80,26 @@ canvas {
 	padding-left: 5vw;
 }
 
+#splash {
+	margin: auto;
+	text-align: center;
+
+	padding-top: 20vh;
+}
+
+#splash > img {
+	width: 300px;
+
+	padding-bottom: 10px;
+
+	transition: transform 1.5s;
+	-webkit-transition: transform 1.5s;
+}
+
 #userinfo {
 	display: none;
 
 	padding-left: 6vw;
-}
-
-.userinfo_tag {
-	display: inline;
-
-	border: 1px solid #000000;
-
-	border-radius: 0.1em;
-	padding: 2px;
-
-	margin-right: 10px;
-
-	color: #000000;
 }
 
 #userinfo:nth-child(0), #userinfo:nth-child(1) {
@@ -102,6 +109,19 @@ canvas {
 
 #userinfo > #stats {
 	margin-top: 4vh;
+}
+
+.userinfo_tag {
+	display: inline;
+
+	padding: 2px;
+	margin-right: 10px;
+
+	border: 1px solid #000000;
+
+	border-radius: 0.1em;
+
+	color: #000000;
 }
 
 .highscore {
