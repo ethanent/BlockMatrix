@@ -24,9 +24,6 @@ body {
 	margin: 0;
 
 	background-color: #F2F2F0;
-
-	overflow-x: hidden;
-	overflow-y: hidden;
 }
 
 a {
@@ -41,6 +38,10 @@ header {
 
 canvas {
 	margin: auto;
+}
+
+main > h2 {
+    margin-left: 3vw;
 }
 
 #game {

@@ -60,5 +60,10 @@ const api = {
 		const parsedBody = await res.json()
 
 		return parsedBody
+	},
+	'getStats': async () => {
+		const res = await c(apiBase, 'POST').path('/fetchStats').send()
+
+		return await res.json()
 	}
 }

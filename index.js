@@ -40,6 +40,20 @@ app.on('ready', () => {
 					}
 				},
 				{
+					'label': 'View Game Stats',
+					'click': () => {
+						let newStatsWindow = new BrowserWindow({
+							'resizable': false,
+							'title': 'BlockMatrix Statistics',
+							'width': 900,
+							'height': 1000,
+							'useContentSize': true
+						})
+
+						newStatsWindow.loadURL('file://' + path.join(__dirname, 'static', 'stats.html'))
+					}
+				},
+				{
 					'label': 'Game Audio',
 					'type': 'checkbox',
 					'checked': true,

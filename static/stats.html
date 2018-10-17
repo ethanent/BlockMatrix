@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BlockMatrix - Game Statistics</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="index.css">
+	<link rel="stylesheet" href="loader.css">
+
+	<script defer src="lib/Chart.min.js"></script>
+	<script defer src="globals.js"></script>
+	<script defer src="api.js"></script>
+	<script defer src="stats.js"></script>
+</head>
+<body>
+	<header>
+		<h1>BlockMatrix - Game Statistics</h1>
+	</header>
+
+	<main>
+		<h2>User Statistics</h2>
+
+		<canvas id="totalUsers" width="400" height="300"></canvas>
+
+		<h2>Daily Games Played</h2>
+
+		<canvas id="gamesPlayed" width="400" height="300"></canvas>
+	</main>
+
+	<div id="copyright">
+		<p>&copy; 2018 Ethan Davis (<a onclick="openSite()" href="#site" draggable="false">ethanent</a>)</p>
+	</div>
+</body>
+</html>
