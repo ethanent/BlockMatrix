@@ -41,17 +41,17 @@ canvas {
 }
 
 main > h2 {
-    margin-left: 3vw;
+	margin-left: 3vw;
 }
 
 input {
-    display: block;
+	display: block;
 
-    width: 30vw;
+	width: 30vw;
 
-    margin-bottom: 0.5vh;
+	margin-bottom: 0.5vh;
 
-    font-size: 1.1em;
+	font-size: 1.1em;
 }
 
 #game {
@@ -90,26 +90,41 @@ input {
 }
 
 #login {
-    display: none;
+	display: none;
 
-    margin-top: 10vh;
+	margin-top: 10vh;
 
-    padding-left: 30vw;
-    padding-right: 30vw;
+	padding-left: 30vw;
+	padding-right: 30vw;
 }
 
 #login > a {
-    margin-top: 5vh;
+	margin-top: 5vh;
 
-    font-size: 1.2em;
+	font-size: 1.2em;
 }
 
-#login > img {
-    width: 200px;
+#login > #central {
+	display: flex;
+
+	align-items: center;
+}
+
+#login > #central > p {
+	font-size: 3em;
+}
+
+#login > #central > img {
+	display: inline;
+
+	height: 170px;
+
+	margin-right: 3vw;
+	margin-left: 3vw;
 }
 
 #login > .disclaimer {
-    font-size: 0.9em;
+	font-size: 0.9em;
 }
 
 #splash {
