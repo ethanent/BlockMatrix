@@ -44,6 +44,16 @@ main > h2 {
     margin-left: 3vw;
 }
 
+input {
+    display: block;
+
+    width: 30vw;
+
+    margin-bottom: 0.5vh;
+
+    font-size: 1.1em;
+}
+
 #game {
 	display: none;
 }
@@ -70,8 +80,6 @@ main > h2 {
 }
 
 #copyright {
-	display: none;
-
 	margin-top: 5vh;
 
 	text-align: center;
@@ -79,6 +87,29 @@ main > h2 {
 
 #renderScores {
 	padding-left: 5vw;
+}
+
+#login {
+    display: none;
+
+    margin-top: 10vh;
+
+    padding-left: 30vw;
+    padding-right: 30vw;
+}
+
+#login > a {
+    margin-top: 5vh;
+
+    font-size: 1.2em;
+}
+
+#login > img {
+    width: 200px;
+}
+
+#login > .disclaimer {
+    font-size: 0.9em;
 }
 
 #splash {

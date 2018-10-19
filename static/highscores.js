@@ -2,21 +2,17 @@
 	const highscores = await api.getHighScores()
 
 	highscores.forEach((highscore) => {
-		const parsedUsername = parseUsername(highscore.username)
-
-		const combinedName = parsedUsername[0] + ' ' + (parsedUsername[1] || '')
-
-		const userLink = sy('a', {'href': '#userprofile', 'draggable': 'false'}, [combinedName])
+		const userLink = sy('a', {'href': '#userprofile', 'draggable': 'false'}, [highscore.name])
 
 		userLink.onclick = async () => {
-			const userInfo = await api.getUserStats(highscore.username)
+			const userInfo = await api.getUserStats(highscore.id)
 
 			document.querySelector('#userinfo_tags').innerHTML = ''
 
 			document.querySelector('#highscores').style.display = 'none'
 			document.querySelector('#userinfo').style.display = 'block'
 
-			document.querySelector('#userinfo_name').textContent = combinedName
+			document.querySelector('#userinfo_name').textContent = highscore.name
 
 			userInfo.tags.forEach((tag) => {
 				const tagElement = sy('p', {'class': 'userinfo_tag'}, [tag.title])

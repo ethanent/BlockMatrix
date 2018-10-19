@@ -1,4 +1,6 @@
 ;(async() => {
+	document.querySelector('#copyright').style.display = 'none'
+
 	await poky(100)
 
 	document.querySelector('#splash > img').style.webkitTransform = 'rotate3d(1, 1, 1, 360deg)'
@@ -6,39 +8,52 @@
 	await poky(2000)
 
 	document.querySelector('#splash').style.display = 'none'
-	
+
+	document.querySelector('#login').style.display = 'block'
+
+	if (username.includes('.')) {
+		document.querySelector('#username').value = username
+
+		document.querySelector('#password').focus()
+	}
+	else document.querySelector('#username').focus()
+})()
+
+const loginStep = async () => {
+	document.querySelector('#login').style.display = 'none'
 	document.querySelector('#status').style.display = 'block'
 
-	console.log('Logging in!')
-
-	let loginRes
-
 	try {
-		loginRes = await api.login()
+		await api.login(document.querySelector('#username').value, document.querySelector('#password').value)
 	}
 	catch (err) {
-		console.error(err)
+		document.querySelector('#status').style.display = 'none'
 
-		document.querySelector('#status > h1').textContent = 'Error'
-		document.querySelector('#status > h2').textContent = 'Failed to login to BlockMatrix server.'
+		alert(err.message)
 
-		await poky(800)
+		document.querySelector('#password').value = ''
+
+		document.querySelector('#login').style.display = 'block'
+
+		document.querySelector('#password').focus()
+
+		return
 	}
 
-	if (syncData.returningPlayer) {
-		document.querySelector('#status > h1').textContent = 'Welcome back, ' + name[0] + '.'
-	}
-	else document.querySelector('#status > h1').textContent = 'Welcome, ' + name[0] + '.'
-
-	await poky(1000)
+	document.querySelector('#password').value = ''
 
 	document.querySelector('#status').style.display = 'none'
-	document.querySelector('#copyright').style.display = 'none'
 
 	document.querySelector('#game').style.display = 'block'
 
 	startGame()
-})()
+}
+
+document.querySelector('#loginButton').onclick = loginStep
+
+document.querySelector('#password').onkeypress = (event) => {
+	if (event.key === 'Enter') loginStep()
+}
 
 //startGame()
 
@@ -73,10 +88,8 @@ const gameEnded = async () => {
 		document.querySelector('#status > h1').textContent = 'Error'
 		document.querySelector('#status > h2').textContent = 'Failed to upload game data.'
 
-		await poky(800)
+		await poky(1200)
 	}
-
-	await poky(800)
 
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#score').style.display = 'block'
