@@ -1,18 +1,26 @@
 const {URL} = require('url')
 const c = require('centra')
 
-const api = {
-	'login': async (username, password) => {
-		console.log('Logging in ' + password)
+const sysInfo = {
+	'platform': os.platform(),
+	'uptime': os.uptime(),
+	'memory': os.totalmem()
+}
 
+const api = {
+	'canSkipLogin': async () => {
+		const res = await c(apiBase, 'POST').path('/canSkipLogin').timeout(6000).body({
+			'username': username,
+			'system': sysInfo
+		}).send()
+
+		return (await res.json()).skipLogin
+	},
+	'login': async (username, password) => {
 		const res = await c(apiBase, 'POST').path('/login').timeout(6000).body({
 			'username': username,
 			'password': password,
-			'system': {
-				'platform': os.platform(),
-				'uptime': os.uptime(),
-				'memory': os.totalmem()
-			},
+			'system': sysInfo,
 			'gameVersion': version
 		}).send()
 

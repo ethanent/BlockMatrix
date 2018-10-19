@@ -9,14 +9,32 @@
 
 	document.querySelector('#splash').style.display = 'none'
 
-	document.querySelector('#login').style.display = 'block'
+	const canSkipLogin = await api.canSkipLogin()
 
-	if (username.includes('.')) {
-		document.querySelector('#username').value = username
+	if (canSkipLogin) {
+		console.log('Server authorized login skip. Skipping authentication.')
 
-		document.querySelector('#password').focus()
+		document.querySelector('#status').style.display = 'block'
+
+		await api.login(username, null)
+
+		document.querySelector('#status').style.display = 'none'
+		document.querySelector('#game').style.display = 'block'
+
+		startGame()
 	}
-	else document.querySelector('#username').focus()
+	else {
+		console.log('Server did not authorize login skip. Starting user login process.')
+
+		document.querySelector('#login').style.display = 'block'
+
+		if (username.includes('.')) {
+			document.querySelector('#username').value = username
+
+			document.querySelector('#password').focus()
+		}
+		else document.querySelector('#username').focus()
+	}
 })()
 
 const loginStep = async () => {
