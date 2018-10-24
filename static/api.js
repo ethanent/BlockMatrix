@@ -25,7 +25,7 @@ const api = {
 		}).send()
 
 		if (res.statusCode === 401) {
-			throw new Error('Your student login credentials were incorrect.')
+			throw new Error((await res.json()).error)
 		}
 		else if (res.statusCode !== 200) {
 			throw new Error('Non-200 status code from API server. ' + res.statusCode)

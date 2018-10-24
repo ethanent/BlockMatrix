@@ -109,6 +109,8 @@ const gameEnded = async () => {
 		await poky(1200)
 	}
 
+	await poky(800)
+
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#score').style.display = 'block'
 
