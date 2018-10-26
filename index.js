@@ -29,7 +29,6 @@ app.on('ready', () => {
 					'label': 'View High Scores',
 					'click': () => {
 						let newHighScoresWindow = new BrowserWindow({
-							'resizable': false,
 							'title': 'BlockMatrix High Scores',
 							'width': 600,
 							'height': 900,
@@ -43,7 +42,6 @@ app.on('ready', () => {
 					'label': 'View Game Stats',
 					'click': () => {
 						let newStatsWindow = new BrowserWindow({
-							'resizable': false,
 							'title': 'BlockMatrix Statistics',
 							'width': 900,
 							'height': 1000,
@@ -60,6 +58,22 @@ app.on('ready', () => {
 					'click': () => {
 						window.webContents.setAudioMuted(!window.webContents.isAudioMuted())
 						this.checked = window.webContents.isAudioMuted()
+					}
+				}
+			]
+		},
+		{
+			'label': 'Help',
+			'submenu': [
+				{
+					'label': 'How to Play',
+					'click': () => {
+						new BrowserWindow({
+							'title': 'How to play BlockMatrix',
+							'width': 900,
+							'height': 1000,
+							'useContentSize': true
+						}).loadURL('file://' + path.join(__dirname, 'static', 'learn.html'))
 					}
 				}
 			]

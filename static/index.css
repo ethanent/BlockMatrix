@@ -40,7 +40,7 @@ canvas {
 	margin: auto;
 }
 
-main > h2 {
+main {
 	margin-left: 3vw;
 }
 
@@ -83,10 +83,6 @@ input {
 	margin-top: 5vh;
 
 	text-align: center;
-}
-
-#renderScores {
-	padding-left: 5vw;
 }
 
 #login {

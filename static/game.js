@@ -44,7 +44,8 @@ const defaultGameState = () => {
 		'started': performance.now(),
 		'highscorePosition': -1,
 		'backgroundColor': '#F2F2F0',
-		'currentBackgroundColor': '#F2F2F0'
+		'currentBackgroundColor': '#F2F2F0',
+		'moveRate': 1
 	}
 }
 
@@ -137,7 +138,7 @@ const turnEnemiesAway = () => {
 const startGame = async () => {
 	gameState = defaultGameState()
 
-	try {
+	/*try {
 		const highScores = await api.getHighScores()
 
 		gameState.highscorePosition = highScores.findIndex((score) => score.username === username)
@@ -145,7 +146,7 @@ const startGame = async () => {
 	catch (err) {
 		console.error(err)
 		console.log('Failed to fetch high scores.')
-	}
+	}*/
 
 	gameState.allowMovement = true
 
@@ -154,11 +155,16 @@ const startGame = async () => {
 }
 
 const gameLoop = () => {
+	if (heldKeys.includes('p')) {
+		gameState.moveRate = 0.3
+	}
+	else gameState.moveRate = 1
+
 	if (gameState.allowMovement) {
-		if (heldKeys.includes('ArrowUp')) gameState.accel.y -= 1
-		if (heldKeys.includes('ArrowDown')) gameState.accel.y += 1
-		if (heldKeys.includes('ArrowLeft')) gameState.accel.x -= 1
-		if (heldKeys.includes('ArrowRight')) gameState.accel.x += 1
+		if (heldKeys.includes('ArrowUp') || heldKeys.includes('w')) gameState.accel.y -= 1 * gameState.moveRate
+		if (heldKeys.includes('ArrowDown') || heldKeys.includes('s')) gameState.accel.y += 1 * gameState.moveRate
+		if (heldKeys.includes('ArrowLeft') || heldKeys.includes('a')) gameState.accel.x -= 1 * gameState.moveRate
+		if (heldKeys.includes('ArrowRight') || heldKeys.includes('d')) gameState.accel.x += 1 * gameState.moveRate
 	}
 
 	if (gameState.location.y <= borderMovementGap && gameState.accel.y < 0) gameState.accel.y = 0
@@ -167,15 +173,15 @@ const gameLoop = () => {
 	if (gameState.location.x <= borderMovementGap && gameState.accel.x < 0) gameState.accel.x = 0
 	if (gameState.location.x >= renderer.element.width - borderMovementGap && gameState.accel.x > 0) gameState.accel.x = 0
 
-	gameState.location.y += gameState.accel.y
-	gameState.location.x += gameState.accel.x
+	gameState.location.y += gameState.accel.y * gameState.moveRate
+	gameState.location.x += gameState.accel.x * gameState.moveRate
 
-	gameState.accel.y *= 0.92 + gameState.globalAccelEffect
-	gameState.accel.x *= 0.92 + gameState.globalAccelEffect
+	gameState.accel.y *= 1 - ((1 - (0.92 + gameState.globalAccelEffect)) * gameState.moveRate)
+	gameState.accel.x *= 1 - ((1 - (0.92 + gameState.globalAccelEffect)) * gameState.moveRate)
 
 	gameState.vel = Math.abs(gameState.accel.x) + Math.abs(gameState.accel.y)
 
-	gameState.odometer += gameState.vel
+	gameState.odometer += gameState.vel * gameState.moveRate
 
 	// Check for powerup expiry
 
@@ -222,7 +228,7 @@ const gameLoop = () => {
 			'index': i
 		})
 	}).filter((entity) => entity.type === 'dot').forEach((dot) => {
-		let moveAmount = dot.multiplier * gameState.vel
+		let moveAmount = dot.multiplier * gameState.vel * gameState.moveRate
 
 		if (gameState.activePowerup && gameState.activePowerup.kind === 'slow') {
 			moveAmount *= 0.1
@@ -304,7 +310,10 @@ const gameLoop = () => {
 	// Update background color
 
 	if (!gameState.ended) {
-		if (gameState.score > 10) {
+		if (gameState.moveRate < 1) {
+			gameState.backgroundColor = '#111314'
+		}
+		else if (gameState.score > 10) {
 			gameState.backgroundColor = '#000000'
 		}
 		else {
@@ -366,7 +375,7 @@ const render = () => {
 
 	// Render score
 
-	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Roboto', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'end', 500))
+	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Roboto', (gameState.score > 10 || gameState.moveRate < 1 ? '#F2F2F0' : '#000000'), 'end', 500))
 
 	// Render powerup progress bar if needed
 
