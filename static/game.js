@@ -38,7 +38,8 @@ const defaultGameState = () => {
 		'ended': false,
 		'stats': {
 			'powerupsUsed': 0,
-			'dotsEaten': 0
+			'dotsEaten': 0,
+			'ggPowerupsUsed': 0
 		},
 		'lastGoalReach': 0,
 		'started': performance.now(),
@@ -75,11 +76,27 @@ const addGoal = () => gameState.entities.splice(0, 0, {
 	'location': randomSafeLocation()
 })
 
-const addPowerUp = () => gameState.entities.push({
-	'type': 'powerup',
-	'location': randomSafeLocation(),
-	'kind': ['slow', 'destroy'][Math.floor(Math.random() * 2)]
-})
+const addPowerUp = () => {
+	let possiblePowerups = ['slow', 'destroy']
+
+	const ggRand = Math.floor(Math.random() * 100)
+
+	if (gameState.entities.filter((entity) => entity.type === 'dot').length > 10) {
+		console.log('ggRand: ' + ggRand)
+
+		if (ggRand === 1) {
+			console.log('Creating GG powerup')
+
+			possiblePowerups = ['GG']
+		}
+	}
+
+	gameState.entities.push({
+		'type': 'powerup',
+		'location': randomSafeLocation(),
+		'kind': possiblePowerups[Math.floor(Math.random() * possiblePowerups.length)]
+	})
+}
 
 const addEnemy = () => {
 	let enemyData
@@ -185,8 +202,18 @@ const gameLoop = () => {
 
 	// Check for powerup expiry
 
-	if (gameState.activePowerup) {
+	if (gameState.activePowerup && typeof gameState.activePowerup.expires === 'number') {
 		if (gameState.odometer > gameState.activePowerup.expires) gameState.activePowerup = null
+	}
+
+	// Handle GG powerup
+
+	if (gameState.activePowerup && gameState.activePowerup.kind === 'gg') {
+		gameState.activePowerup.radius += 5
+
+		if (gameState.activePowerup.radius > 1300) {
+			gameState.activePowerup = null
+		}
 	}
 
 	// Check for goal touching
@@ -211,7 +238,7 @@ const gameLoop = () => {
 			console.log('Updated globalAccelEffect to ' + gameState.globalAccelEffect)
 		}
 
-		if (gameState.score % 5 === 0 && gameState.entities.findIndex((entity) => entity.type === 'powerup') === -1 && !gameState.activePowerup) {
+		if (gameState.score % 5 === 0 && gameState.entities.findIndex((entity) => entity.type === 'powerup') === -1) {
 			addPowerUp()
 		}
 
@@ -275,6 +302,18 @@ const gameLoop = () => {
 				gameEnded()
 			}
 		}
+
+		// Destroy if GG powerup and should be gone.
+
+		if (gameState.activePowerup && gameState.activePowerup.kind === 'gg') {
+			if (pointDist([renderer.element.width / 2, renderer.element.height / 2], [dot.location.x, dot.location.y]) < gameState.activePowerup.radius) {
+				playSoundEffect('destroy.wav')
+
+				gameState.entities.splice(dot.index, 1)
+
+				gameState.stats.dotsEaten++
+			}
+		}
 	})
 
 	// Check for powerup activations
@@ -299,6 +338,15 @@ const gameLoop = () => {
 				}
 			}
 
+			if (powerup.kind === 'GG') {
+				gameState.stats.ggPowerupsUsed++
+
+				gameState.activePowerup = {
+					'kind': 'gg',
+					'radius': 0
+				}
+			}
+
 			gameState.stats.powerupsUsed++
 
 			playSoundEffect('powerup.wav')
@@ -310,7 +358,10 @@ const gameLoop = () => {
 	// Update background color
 
 	if (!gameState.ended) {
-		if (gameState.moveRate < 1) {
+		if (gameState.activePowerup && gameState.activePowerup.kind === 'gg') {
+			gameState.backgroundColor = '#515261'
+		}
+		else if (gameState.moveRate < 1) {
 			gameState.backgroundColor = '#111314'
 		}
 		else if (gameState.score > 10) {
@@ -336,21 +387,25 @@ const render = () => {
 
 	renderer.clear()
 
-	let renderBlockColor = (gameState.activePowerup && gameState.activePowerup.kind === 'destroy' ? '#3498DB' : false)
+	let renderBlockColor
 
-	if (renderBlockColor === false) {
-		if (gameState.highscorePosition === 0) {
-			renderBlockColor = '#FFCA09'
+	if (gameState.activePowerup && gameState.activePowerup.kind === 'destroy') {
+		if (gameState.activePowerup.expires < gameState.odometer + 400) {
+			renderBlockColor = '#16415E'
 		}
-		else if (gameState.highscorePosition === 1) {
-			renderBlockColor = '#B6B5B8'
-		}
-		else if (gameState.highscorePosition === 2) {
-			renderBlockColor = '#9C893A'
-		}
-		else {
-			renderBlockColor = '#FFBB59'
-		}
+		else renderBlockColor = '#3498DB'
+	}
+	else if (gameState.highscorePosition === 0) {
+		renderBlockColor = '#FFCA09'
+	}
+	else if (gameState.highscorePosition === 1) {
+		renderBlockColor = '#B6B5B8'
+	}
+	else if (gameState.highscorePosition === 2) {
+		renderBlockColor = '#9C893A'
+	}
+	else {
+		renderBlockColor = '#FFBB59'
 	}
 
 	renderer.add(new canvax.Rectangle(gameState.location.x - gameState.size / 2, gameState.location.y - gameState.size / 2, gameState.size, gameState.size, renderBlockColor, 'none'))
@@ -373,13 +428,19 @@ const render = () => {
 		}
 	})
 
+	// Render GG powerup circle if needed
+
+	if (gameState.activePowerup && gameState.activePowerup.kind === 'gg') {
+		renderer.add(new canvax.Circle(renderer.element.width / 2, renderer.element.height / 2, gameState.activePowerup.radius, 'none', '#ED553B', 5))
+	}
+
 	// Render score
 
 	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Roboto', (gameState.score > 10 || gameState.moveRate < 1 ? '#F2F2F0' : '#000000'), 'end', 500))
 
 	// Render powerup progress bar if needed
 
-	if (gameState.activePowerup) renderer.add(new canvax.Rectangle(0, renderer.element.height - 15, ((gameState.odometer - gameState.activePowerup.startedAt) / (gameState.activePowerup.expires - gameState.activePowerup.startedAt)) * renderer.element.width, 15, '#00A388', 'none'))
+	if (gameState.activePowerup && typeof gameState.activePowerup.expires === 'number') renderer.add(new canvax.Rectangle(0, renderer.element.height - 15, ((gameState.odometer - gameState.activePowerup.startedAt) / (gameState.activePowerup.expires - gameState.activePowerup.startedAt)) * renderer.element.width, 15, '#00A388', 'none'))
 
 	renderer.render()
 
