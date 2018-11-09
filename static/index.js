@@ -5,7 +5,7 @@
 
 	document.querySelector('#splash > img').style.webkitTransform = 'rotate3d(1, 1, 1, 360deg)'
 
-	await poky(2000)
+	await poky(1000)
 
 	document.querySelector('#splash').style.display = 'none'
 
@@ -82,6 +82,8 @@ const gameEnded = async () => {
 
 	syncData.gamesPlayed++
 
+	gameState.moveRate = 0.8
+
 	await poky(1000)
 
 	document.body.style.backgroundColor = '#F2F2F0'
@@ -109,7 +111,7 @@ const gameEnded = async () => {
 		await poky(1200)
 	}
 
-	await poky(800)
+	await poky(300)
 
 	document.querySelector('#status').style.display = 'none'
 	document.querySelector('#score').style.display = 'block'

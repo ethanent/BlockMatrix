@@ -46,7 +46,8 @@ const defaultGameState = () => {
 		'highscorePosition': -1,
 		'backgroundColor': '#F2F2F0',
 		'currentBackgroundColor': '#F2F2F0',
-		'moveRate': 1
+		'moveRate': 1,
+		'renderedFrames': 0
 	}
 }
 
@@ -77,7 +78,7 @@ const addGoal = () => gameState.entities.splice(0, 0, {
 })
 
 const addPowerUp = () => {
-	let possiblePowerups = ['slow', 'destroy']
+	let possiblePowerups = ['slow', 'destroy', 'speed']
 
 	const ggRand = Math.floor(Math.random() * 100)
 
@@ -172,10 +173,12 @@ const startGame = async () => {
 }
 
 const gameLoop = () => {
-	if (heldKeys.includes('p')) {
-		gameState.moveRate = 0.3
+	if (!gameState.ended) {
+		if (heldKeys.includes('p')) {
+			gameState.moveRate = 0.3
+		}
+		else gameState.moveRate = 1
 	}
-	else gameState.moveRate = 1
 
 	if (gameState.allowMovement) {
 		if (heldKeys.includes('ArrowUp') || heldKeys.includes('w')) gameState.accel.y -= 1 * gameState.moveRate
@@ -257,8 +260,13 @@ const gameLoop = () => {
 	}).filter((entity) => entity.type === 'dot').forEach((dot) => {
 		let moveAmount = dot.multiplier * gameState.vel * gameState.moveRate
 
-		if (gameState.activePowerup && gameState.activePowerup.kind === 'slow') {
-			moveAmount *= 0.1
+		if (gameState.activePowerup) {
+			if (gameState.activePowerup.kind === 'speed') {
+				moveAmount *= 2
+			}
+			else if (gameState.activePowerup.kind === 'slow') {
+				moveAmount *= 0.1
+			}
 		}
 
 		if (dot.direction === 'up') {
@@ -338,6 +346,14 @@ const gameLoop = () => {
 				}
 			}
 
+			if (powerup.kind === 'speed') {
+				gameState.activePowerup = {
+					'kind': 'speed',
+					'expires': gameState.odometer + 2600,
+					'startedAt': gameState.odometer
+				}
+			}
+
 			if (powerup.kind === 'GG') {
 				gameState.stats.ggPowerupsUsed++
 
@@ -374,6 +390,8 @@ const gameLoop = () => {
 }
 
 const render = () => {
+	gameState.renderedFrames++
+
 	// Set background color.
 
 	if (gameState.currentBackgroundColor !== gameState.backgroundColor) {
@@ -384,7 +402,7 @@ const render = () => {
 	}
 
 	// Clear all entities currently loaded
-
+	
 	renderer.clear()
 
 	let renderBlockColor
@@ -394,6 +412,12 @@ const render = () => {
 			renderBlockColor = '#16415E'
 		}
 		else renderBlockColor = '#3498DB'
+	}
+	else if (gameState.activePowerup && gameState.activePowerup.kind === 'speed') {
+		if (gameState.activePowerup.expires < gameState.odometer + 400) {
+			renderBlockColor = '#836890'
+		}
+		else renderBlockColor = '#A986BA'
 	}
 	else if (gameState.highscorePosition === 0) {
 		renderBlockColor = '#FFCA09'
