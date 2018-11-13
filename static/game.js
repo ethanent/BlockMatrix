@@ -18,12 +18,7 @@ renderer.element.height = window.innerHeight
 //renderer.ctx.transform(1, 0, 0, -1, 0, renderer.element.height)
 
 const defaultGameState = () => {
-	return {
-		'location': {
-			'x': 100,
-			'y': 100
-		},
-		'size': 60,
+	const gen = {
 		'accel': {
 			'x': 0,
 			'y': 0
@@ -47,11 +42,12 @@ const defaultGameState = () => {
 		'backgroundColor': '#F2F2F0',
 		'currentBackgroundColor': '#F2F2F0',
 		'moveRate': 1,
-		'renderedFrames': 0
+		'renderedFrames': 0,
+		'player': new canvax.Rectangle(40, 40, 60, 60, '#FFBB59', 'none')
 	}
-}
 
-const borderMovementGap = 40
+	return gen
+}
 
 let gameState = defaultGameState()
 
@@ -60,7 +56,7 @@ const randomCoordsInRange = () => [Math.floor(Math.random() * (renderer.element.
 const randomSafeLocation = () => {
 	let coords = randomCoordsInRange()
 
-	while (pointDist(coords, [gameState.location.x, gameState.location.y]) < 300) {
+	while (pointDist(coords, [gameState.player.x, gameState.player.y]) < 300) {
 		coords = randomCoordsInRange()
 	}
 
@@ -72,13 +68,17 @@ const randomSafeLocation = () => {
 	}
 }
 
-const addGoal = () => gameState.entities.splice(0, 0, {
-	'type': 'goal',
-	'location': randomSafeLocation()
-})
+const addGoal = () => {
+	const loc = randomSafeLocation()
+	
+	gameState.entities.splice(0, 0, {
+		'type': 'goal',
+		'entity': new canvax.Circle(loc.x, loc.y, 30, '#A7DDA7', 'none')
+	})
+}
 
 const addPowerUp = () => {
-	let possiblePowerups = ['slow', 'destroy', 'speed']
+	let possiblePowerups = ['slow', 'destroy', 'speed', 'grow']
 
 	const ggRand = Math.floor(Math.random() * 100)
 
@@ -92,27 +92,29 @@ const addPowerUp = () => {
 		}
 	}
 
+	const loc = randomSafeLocation()
+
 	gameState.entities.push({
 		'type': 'powerup',
-		'location': randomSafeLocation(),
-		'kind': possiblePowerups[Math.floor(Math.random() * possiblePowerups.length)]
+		'kind': possiblePowerups[Math.floor(Math.random() * possiblePowerups.length)],
+		'entity': new canvax.Circle(loc.x, loc.y, 25, '#3498DB', 'none')
 	})
 }
 
 const addEnemy = () => {
 	let enemyData
 
-	while (!enemyData || pointDist([gameState.location.x, gameState.location.y], [enemyData.location.x, enemyData.location.y]) < 300) {
+	while (!enemyData || pointDist([gameState.player.x, gameState.player.y], [enemyData.entity.x, enemyData.entity.y]) < 300) {
 		let direction = ['up', 'down', 'left', 'right'][Math.floor(Math.random() * 4)]
+
+		const xPos = direction === 'up' || direction === 'down' ? Math.floor(Math.random() * renderer.element.width) : (direction === 'right' ? 20 : renderer.element.width - 20)
+		const yPos = direction === 'left' || direction === 'right' ? Math.floor(Math.random() * renderer.element.height) : (direction === 'up' ? 20 : renderer.element.height - 20)
 
 		enemyData = {
 			'type': 'dot',
 			'direction': direction,
-			'location': {
-				'x': direction === 'up' || direction === 'down' ? Math.floor(Math.random() * renderer.element.width) : (direction === 'right' ? 20 : renderer.element.width - 20),
-				'y': direction === 'left' || direction === 'right' ? Math.floor(Math.random() * renderer.element.height) : (direction === 'up' ? 20 : renderer.element.height - 20)
-			},
-			'multiplier': (Math.floor(Math.random() * 60) + 50) * 0.01
+			'multiplier': (Math.floor(Math.random() * 60) + 50) * 0.01,
+			'entity': new canvax.Circle(xPos, yPos, 25, '#E74C3C', 'none')
 		}
 	}
 
@@ -135,7 +137,7 @@ const turnEnemiesAway = () => {
 		}
 
 		if (dot.direction === 'up' || dot.direction === 'down') {
-			if (dot.location.y > gameState.location.y) {
+			if (dot.entity.y > gameState.entity.y) {
 				dot.direction = 'up'
 			}
 			else {
@@ -143,7 +145,7 @@ const turnEnemiesAway = () => {
 			}
 		}
 		else if (dot.direction === 'left' || dot.direction === 'right') {
-			if (dot.location.x > gameState.location.x) {
+			if (dot.entity.x > gameState.entity.x) {
 				dot.direction = 'right'
 			}
 			else {
@@ -187,14 +189,14 @@ const gameLoop = () => {
 		if (heldKeys.includes('ArrowRight') || heldKeys.includes('d')) gameState.accel.x += 1 * gameState.moveRate
 	}
 
-	if (gameState.location.y <= borderMovementGap && gameState.accel.y < 0) gameState.accel.y = 0
-	if (gameState.location.y >= renderer.element.height - borderMovementGap && gameState.accel.y > 0) gameState.accel.y = 0
+	if (gameState.player.y <= 0 && gameState.accel.y < 0) gameState.accel.y = 0
+	if (gameState.player.y >= renderer.element.height - gameState.player.height && gameState.accel.y > 0) gameState.accel.y = 0
 
-	if (gameState.location.x <= borderMovementGap && gameState.accel.x < 0) gameState.accel.x = 0
-	if (gameState.location.x >= renderer.element.width - borderMovementGap && gameState.accel.x > 0) gameState.accel.x = 0
+	if (gameState.player.x <= 0 && gameState.accel.x < 0) gameState.accel.x = 0
+	if (gameState.player.x >= renderer.element.width - gameState.player.width && gameState.accel.x > 0) gameState.accel.x = 0
 
-	gameState.location.y += gameState.accel.y * gameState.moveRate
-	gameState.location.x += gameState.accel.x * gameState.moveRate
+	gameState.player.y += gameState.accel.y * gameState.moveRate
+	gameState.player.x += gameState.accel.x * gameState.moveRate
 
 	gameState.accel.y *= 1 - ((1 - (0.92 + gameState.globalAccelEffect)) * gameState.moveRate)
 	gameState.accel.x *= 1 - ((1 - (0.92 + gameState.globalAccelEffect)) * gameState.moveRate)
@@ -219,11 +221,22 @@ const gameLoop = () => {
 		}
 	}
 
+	// Handle growth
+
+	if (gameState.activePowerup && gameState.activePowerup.kind === 'grow') {
+		gameState.player.width = 120
+		gameState.player.height = 120
+	}
+	else {
+		gameState.player.width = 60
+		gameState.player.height = 60
+	}
+
 	// Check for goal touching
 
 	let goal = gameState.entities.find((ent) => ent.type === 'goal')
 
-	if (!gameState.ended && goal && pointDist([gameState.location.x, gameState.location.y], [goal.location.x, goal.location.y]) < 62) {
+	if (!gameState.ended && goal && gameState.player.intersects(goal.entity)) {
 		gameState.entities.splice(gameState.entities.findIndex((ent) => ent.type === 'goal'), 1)
 
 		gameState.score++
@@ -270,27 +283,27 @@ const gameLoop = () => {
 		}
 
 		if (dot.direction === 'up') {
-			dot.location.y += moveAmount
+			dot.entity.y += moveAmount
 
-			if (dot.location.y > renderer.element.height) dot.direction = 'down'
+			if (dot.entity.y > renderer.element.height) dot.direction = 'down'
 		}
 		else if (dot.direction === 'down') {
-			dot.location.y -= moveAmount
+			dot.entity.y -= moveAmount
 
-			if (dot.location.y < 0) dot.direction = 'up'
+			if (dot.entity.y < 0) dot.direction = 'up'
 		}
 		else if (dot.direction === 'left') {
-			dot.location.x -= moveAmount
+			dot.entity.x -= moveAmount
 
-			if (dot.location.x < 0) dot.direction = 'right'
+			if (dot.entity.x < 0) dot.direction = 'right'
 		}
 		else if (dot.direction === 'right') {
-			dot.location.x += moveAmount
+			dot.entity.x += moveAmount
 
-			if (dot.location.x > renderer.element.width) dot.direction = 'left'
+			if (dot.entity.x > renderer.element.width) dot.direction = 'left'
 		}
 
-		if (pointDist([gameState.location.x, gameState.location.y], [dot.location.x, dot.location.y]) < 56) {
+		if (gameState.player.intersects(dot.entity)) {
 			if (gameState.activePowerup && gameState.activePowerup.kind === 'destroy') {
 				playSoundEffect('destroy.wav')
 
@@ -314,7 +327,7 @@ const gameLoop = () => {
 		// Destroy if GG powerup and should be gone.
 
 		if (gameState.activePowerup && gameState.activePowerup.kind === 'gg') {
-			if (pointDist([renderer.element.width / 2, renderer.element.height / 2], [dot.location.x, dot.location.y]) < gameState.activePowerup.radius) {
+			if (pointDist([renderer.element.width / 2, renderer.element.height / 2], [dot.entity.x, dot.entity.y]) < gameState.activePowerup.radius) {
 				playSoundEffect('destroy.wav')
 
 				gameState.entities.splice(dot.index, 1)
@@ -327,7 +340,7 @@ const gameLoop = () => {
 	// Check for powerup activations
 
 	if (!gameState.ended) gameState.entities.filter((entity) => entity.type === 'powerup').forEach((powerup) => {
-		if (pointDist([gameState.location.x, gameState.location.y], [powerup.location.x, powerup.location.y]) < 55) {
+		if (gameState.player.intersects(powerup.entity)) {
 			console.log('Activating powerup.')
 
 			if (powerup.kind === 'slow') {
@@ -349,6 +362,14 @@ const gameLoop = () => {
 			if (powerup.kind === 'speed') {
 				gameState.activePowerup = {
 					'kind': 'speed',
+					'expires': gameState.odometer + 2600,
+					'startedAt': gameState.odometer
+				}
+			}
+
+			if (powerup.kind === 'grow') {
+				gameState.activePowerup = {
+					'kind': 'grow',
 					'expires': gameState.odometer + 2600,
 					'startedAt': gameState.odometer
 				}
@@ -432,24 +453,18 @@ const render = () => {
 		renderBlockColor = '#FFBB59'
 	}
 
-	renderer.add(new canvax.Rectangle(gameState.location.x - gameState.size / 2, gameState.location.y - gameState.size / 2, gameState.size, gameState.size, renderBlockColor, 'none'))
+	gameState.player.backgroundColor = renderBlockColor
+
+	renderer.add(gameState.player)
 
 	// Render all entities
 
 	gameState.entities.forEach((entity) => {
-		if (entity.type === 'goal') {
-			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 30, '#A7DDA7', 'none'))
-		}
-
-		if (entity.type === 'dot') {
-			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 25, '#E74C3C', 'none'))
-		}
-
 		if (entity.type === 'powerup') {
-			renderer.add(new canvax.Circle(entity.location.x, entity.location.y, 25, '#3498DB', 'none'))
-
-			renderer.add(new canvax.Text(entity.location.x, entity.location.y - 30, entity.kind.toUpperCase(), '20px Roboto', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'center', 500))
+			renderer.add(new canvax.Text(entity.entity.x, entity.entity.y - 30, entity.kind.toUpperCase(), '20px Roboto', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'center', 500))
 		}
+
+		renderer.add(entity.entity)
 	})
 
 	// Render GG powerup circle if needed
