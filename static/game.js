@@ -373,6 +373,14 @@ const gameLoop = () => {
 					'expires': gameState.odometer + 2600,
 					'startedAt': gameState.odometer
 				}
+
+				gameState.entities.filter((entity) => entity.type === 'dot').forEach((enemy) => {
+					if (pointDist([enemy.entity.x, enemy.entity.y], [gameState.player.x, gameState.player.y]) < 400) {
+						playSoundEffect('destroy.wav')
+
+						gameState.entities.splice(gameState.entities.indexOf(enemy), 1)
+					}
+				})
 			}
 
 			if (powerup.kind === 'GG') {
