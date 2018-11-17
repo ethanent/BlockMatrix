@@ -137,7 +137,7 @@ const turnEnemiesAway = () => {
 		}
 
 		if (dot.direction === 'up' || dot.direction === 'down') {
-			if (dot.entity.y > gameState.entity.y) {
+			if (dot.entity.y > gameState.player.y) {
 				dot.direction = 'up'
 			}
 			else {
@@ -145,7 +145,7 @@ const turnEnemiesAway = () => {
 			}
 		}
 		else if (dot.direction === 'left' || dot.direction === 'right') {
-			if (dot.entity.x > gameState.entity.x) {
+			if (dot.entity.x > gameState.player.x) {
 				dot.direction = 'right'
 			}
 			else {
