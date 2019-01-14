@@ -175,13 +175,6 @@ const startGame = async () => {
 }
 
 const gameLoop = () => {
-	if (!gameState.ended) {
-		if (heldKeys.includes('p')) {
-			gameState.moveRate = 0.3
-		}
-		else gameState.moveRate = 1
-	}
-
 	if (gameState.allowMovement) {
 		if (heldKeys.includes('ArrowUp') || heldKeys.includes('w')) gameState.accel.y -= 1 * gameState.moveRate
 		if (heldKeys.includes('ArrowDown') || heldKeys.includes('s')) gameState.accel.y += 1 * gameState.moveRate
@@ -275,7 +268,7 @@ const gameLoop = () => {
 
 		if (gameState.activePowerup) {
 			if (gameState.activePowerup.kind === 'speed') {
-				moveAmount *= 2
+				moveAmount *= 1.2
 			}
 			else if (gameState.activePowerup.kind === 'slow') {
 				moveAmount *= 0.1

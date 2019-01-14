@@ -1,6 +1,6 @@
 {
 	"name": "blockmatrix",
-	"version": "1.9.1",
+	"version": "1.10.0",
 	"description": "",
 	"main": "index.js",
 	"scripts": {
@@ -22,7 +22,7 @@
 		}
 	},
 	"game": {
-		"apiBase": "http://localhost:8080"
+		"apiBase": "https://api.teamrhs.com"
 	},
 	"dependencies": {
 		"centra": "^2.0.2"
