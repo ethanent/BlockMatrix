@@ -78,7 +78,7 @@ const addGoal = () => {
 }
 
 const addPowerUp = () => {
-	let possiblePowerups = ['slow', 'destroy', 'speed', 'grow']
+	let possiblePowerups = ['slow', 'destroy', 'speed', 'grow', 'shrink']
 
 	const ggRand = Math.floor(Math.random() * 100)
 
@@ -214,11 +214,15 @@ const gameLoop = () => {
 		}
 	}
 
-	// Handle growth
+	// Handle grow / shrink
 
 	if (gameState.activePowerup && gameState.activePowerup.kind === 'grow') {
 		gameState.player.width = 120
 		gameState.player.height = 120
+	}
+	else if (gameState.activePowerup && gameState.activePowerup.kind === 'shrink') {
+		gameState.player.width = 15
+		gameState.player.height = 15
 	}
 	else {
 		gameState.player.width = 60
@@ -344,6 +348,14 @@ const gameLoop = () => {
 				}
 			}
 
+			if (powerup.kind === 'shrink') {
+				gameState.activePowerup = {
+					'kind': 'shrink',
+					'expires': gameState.odometer + 2200,
+					'startedAt': gameState.odometer
+				}
+			}
+
 			if (powerup.kind === 'destroy') {
 				gameState.activePowerup = {
 					'kind': 'destroy',
@@ -430,6 +442,8 @@ const render = () => {
 	
 	renderer.clear()
 
+	// Select player color.
+
 	let renderBlockColor
 
 	if (gameState.activePowerup && gameState.activePowerup.kind === 'destroy') {
@@ -465,7 +479,7 @@ const render = () => {
 
 	gameState.entities.forEach((entity) => {
 		if (entity.type === 'powerup') {
-			renderer.add(new canvax.Text(entity.entity.x, entity.entity.y - 30, entity.kind.toUpperCase(), '20px Roboto', (gameState.score > 10 ? '#F2F2F0' : '#000000'), 'center', 500))
+			renderer.add(new canvax.Text(entity.entity.x, entity.entity.y - 30, entity.kind.toUpperCase(), '20px Roboto', (gameState.score > 10 && gameState.score <= 20 ? '#F2F2F0' : '#000000'), 'center', 500))
 		}
 
 		renderer.add(entity.entity)
