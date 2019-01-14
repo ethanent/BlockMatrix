@@ -43,7 +43,7 @@ const defaultGameState = () => {
 		'currentBackgroundColor': '#F2F2F0',
 		'moveRate': 1,
 		'renderedFrames': 0,
-		'player': new canvax.Rectangle(40, 40, 60, 60, '#FFBB59', 'none')
+		'player': new canvax.Rectangle(40, 40, 60, 60, '#FFBB59', '#000000', 2)
 	}
 
 	return gen
@@ -73,7 +73,7 @@ const addGoal = () => {
 	
 	gameState.entities.splice(0, 0, {
 		'type': 'goal',
-		'entity': new canvax.Circle(loc.x, loc.y, 30, '#A7DDA7', 'none')
+		'entity': new canvax.Circle(loc.x, loc.y, 30, '#01C0EB', '#000000', 2)
 	})
 }
 
@@ -97,7 +97,7 @@ const addPowerUp = () => {
 	gameState.entities.push({
 		'type': 'powerup',
 		'kind': possiblePowerups[Math.floor(Math.random() * possiblePowerups.length)],
-		'entity': new canvax.Circle(loc.x, loc.y, 25, '#3498DB', 'none')
+		'entity': new canvax.Circle(loc.x, loc.y, 20, '#66EF55', '#000000', 2)
 	})
 }
 
@@ -114,7 +114,7 @@ const addEnemy = () => {
 			'type': 'dot',
 			'direction': direction,
 			'multiplier': (Math.floor(Math.random() * 60) + 50) * 0.01,
-			'entity': new canvax.Circle(xPos, yPos, 25, '#E74C3C', 'none')
+			'entity': new canvax.Circle(xPos, yPos, 25, '#ED193A', '#000000', 2)
 		}
 	}
 
@@ -399,11 +399,14 @@ const gameLoop = () => {
 		if (gameState.activePowerup && gameState.activePowerup.kind === 'gg') {
 			gameState.backgroundColor = '#515261'
 		}
-		else if (gameState.moveRate < 1) {
-			gameState.backgroundColor = '#111314'
+		else if (gameState.score > 30) {
+			gameState.backgroundColor = '#B1C4D2'
+		}
+		else if (gameState.score > 20) {
+			gameState.backgroundColor = '#E5E5E5'
 		}
 		else if (gameState.score > 10) {
-			gameState.backgroundColor = '#000000'
+			gameState.backgroundColor = '#3D3D3D'
 		}
 		else {
 			gameState.backgroundColor = '#F2F2F0'
@@ -480,7 +483,7 @@ const render = () => {
 
 	// Render powerup progress bar if needed
 
-	if (gameState.activePowerup && typeof gameState.activePowerup.expires === 'number') renderer.add(new canvax.Rectangle(0, renderer.element.height - 15, ((gameState.odometer - gameState.activePowerup.startedAt) / (gameState.activePowerup.expires - gameState.activePowerup.startedAt)) * renderer.element.width, 15, '#00A388', 'none'))
+	if (gameState.activePowerup && typeof gameState.activePowerup.expires === 'number') renderer.add(new canvax.Rectangle(0, renderer.element.height - 15, ((gameState.odometer - gameState.activePowerup.startedAt) / (gameState.activePowerup.expires - gameState.activePowerup.startedAt)) * renderer.element.width, 15, '#00A388', '#000000', 2))
 
 	renderer.render()
 
