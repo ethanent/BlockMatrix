@@ -194,6 +194,11 @@ const gameLoop = () => {
 	gameState.accel.y *= 1 - ((1 - (0.92 + gameState.globalAccelEffect)) * gameState.moveRate)
 	gameState.accel.x *= 1 - ((1 - (0.92 + gameState.globalAccelEffect)) * gameState.moveRate)
 
+	if (gameState.activePowerup && gameState.activePowerup.kind === 'shrink') {
+		gameState.accel.y *= 0.9
+		gameState.accel.x *= 0.9
+	}
+
 	gameState.vel = Math.abs(gameState.accel.x) + Math.abs(gameState.accel.y)
 
 	gameState.odometer += gameState.vel * gameState.moveRate
@@ -351,7 +356,7 @@ const gameLoop = () => {
 			if (powerup.kind === 'shrink') {
 				gameState.activePowerup = {
 					'kind': 'shrink',
-					'expires': gameState.odometer + 2200,
+					'expires': gameState.odometer + 2600,
 					'startedAt': gameState.odometer
 				}
 			}
