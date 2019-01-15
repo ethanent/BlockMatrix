@@ -498,7 +498,7 @@ const render = () => {
 
 	// Render score
 
-	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Roboto', (gameState.score > 10 || gameState.moveRate < 1 ? '#F2F2F0' : '#000000'), 'end', 500))
+	renderer.add(new canvax.Text(renderer.element.width - 30, 34, gameState.score, '28px Roboto', (gameState.score > 10 && gameState.score <= 20 ? '#F2F2F0' : '#000000'), 'end', 500))
 
 	// Render powerup progress bar if needed
 
